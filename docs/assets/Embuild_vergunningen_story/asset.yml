@@ -1,0 +1,19 @@
+name: "Embuild Vergunningen Story"
+description: "Analysis of building permits data showing trends in new construction, renovation, and demolition permits over time"
+author: "Data Analytics Team"
+created: "2025-08-23"
+tags:
+  - permits
+  - building
+  - trends
+  - government-data
+
+files:
+  csv: graph_data_export.csv
+  html: vergunningen-trend.html
+
+metadata:
+  data_source: "Municipal building permits database"
+  time_period: "2018-2024"
+  update_frequency: "Quarterly"
+  chart_type: "Multi-line time series"

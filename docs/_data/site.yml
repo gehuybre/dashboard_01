@@ -1,3 +1,21 @@
 # Centralized site data (referenced by macros if needed)
-org: Your Organization
-default_author: Your Name
+org: Test Org
+default_author: "Gert Huybrechts"
+
+brand:
+  name: "Embuild"
+
+charts:
+  # Global palette
+  colors:
+    primary: "#005EB8"
+    secondary: "#00A3E0"
+    accent: "#FFC300"
+    neutral: "#5F6A6A"
+    gray: "#D5D8DC"
+  # Typography / layout
+  font_family: "Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
+  title_size: 20
+  axis_size: 12
+  grid: true
+  template: "simple_white"
