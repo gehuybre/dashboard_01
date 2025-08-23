@@ -28,9 +28,15 @@ def render_download_buttons(asset):
 
 def embed_snippet(slug, width=800, height=480, site_url=""):
     """Return a ready-to-copy <iframe> snippet for an asset embed page."""
-    # Use the provided site_url or fall back to the hardcoded one
-    base_url = site_url or "https://gehuybre.github.io/dashboard_01"
-    src = f'{base_url}/assets/{slug}-embed/'
+    # Use the provided site_url or construct a relative URL
+    if site_url:
+        if not site_url.startswith(("http://","https://")):
+            site_url = f"https://{site_url}"
+        src = f'{site_url.rstrip("/")}/assets/{slug}-embed/'
+    else:
+        # Return a relative URL if no site_url provided
+        src = f'assets/{slug}-embed/'
+    
     # Return as a code block that users can copy
     iframe_code = f'<iframe src="{src}" width="{int(width)}" height="{int(height)}" loading="lazy" title="{slug}"></iframe>'
     return f'```html\n{iframe_code}\n```'

@@ -1,24 +1,28 @@
 // Auto-height iframe system and embed snippet UX
 (function () {
-  function setH(el, h) { el.style.height = Math.max(240, Math.ceil(h)) + "px"; }
-
-  // Listen for height messages from the *embed page*
-  window.addEventListener("message", function (e) {
+  function setH(el, h) { el.style.height = Math.max(300, Math.ceil(h)) + "px"; }
+  function onMessage(e) {
     var d = e.data || {};
     if (d.type !== "plotly-embed-size") return;
-    // If you include slug targeting, keep it; else set all marked iframes.
     document.querySelectorAll('iframe[data-embed-autoheight]').forEach(function (ifr) {
       if (!d.slug || ifr.getAttribute('data-embed-slug') === d.slug) setH(ifr, d.height);
     });
-  });
-
-  // Optional: ping children so they respond immediately on load
+  }
   function ping() {
     document.querySelectorAll('iframe[data-embed-autoheight]').forEach(function (ifr) {
-      try { ifr.contentWindow && ifr.contentWindow.postMessage({ type: "plotly-embed-ping" }, "*"); } catch (e) {}
+      try { if (ifr.contentWindow) ifr.contentWindow.postMessage({ type: "plotly-embed-ping" }, "*"); } catch (e) {}
     });
   }
+
+  window.addEventListener("message", onMessage);
+
+  // Initial load
   document.addEventListener("DOMContentLoaded", ping);
+
+  // Re-run after every SPA navigation in Material
+  if (window.document$ && typeof window.document$.subscribe === "function") {
+    window.document$.subscribe(function () { ping(); });
+  }
 })();
 
 // Enhancements for embed snippet UX (copy on click if desired)

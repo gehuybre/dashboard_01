@@ -3,8 +3,24 @@ from datetime import date
 
 def define_env(env):
     """Define macros for MkDocs"""
-    site_url = (env.conf.get("site_url") or "").rstrip("/")
-    
+    site_url = (env.conf.get("site_url") or "").rstrip("/")  # e.g. https://gehuybre.github.io/dashboard_01
+
+    def abs_url(path: str) -> str:
+        """Convert a relative path to an absolute URL using site_url"""
+        if path.startswith(("http://","https://")):
+            return path
+        return f"{site_url}/{path.lstrip('/')}"
+
+    @env.macro
+    def embed_iframe(slug, width=800, height=480, title=None):
+        """Render a LIVE iframe to the generated -embed page with auto-height."""
+        title = title or slug
+        return (
+            f'<iframe src="{abs_url(f"assets/{slug}-embed/")}" '
+            f'width="100%" height="{height}" loading="lazy" title="{title}" '
+            f'style="border:0;" data-embed-autoheight data-embed-slug="{slug}"></iframe>'
+        )
+
     @env.macro
     def asset_page_content(meta):
         return asset_page_content_standalone(meta, site_url)
@@ -13,8 +29,8 @@ def define_env(env):
     def embed_page_content(meta):
         return embed_page_content_standalone(meta, site_url)
 
-def abs_url(path: str, site_url: str) -> str:
-    """Convert a relative path to an absolute URL using site_url"""
+def abs_url_standalone(path: str, site_url: str) -> str:
+    """Convert a relative path to an absolute URL using site_url (standalone version)"""
     if path.startswith(("http://", "https://")):
         return path
     return f"{site_url.rstrip('/')}/{path.lstrip('/')}"
@@ -31,7 +47,7 @@ def _downloads_html(files, site_url=""):
             
             # For HTML files, open in new tab; others download
             if ext == 'html':
-                href = abs_url(file_path, site_url) if site_url else file_path
+                href = abs_url_standalone(file_path, site_url) if site_url else file_path
                 parts.append(f'<a class="dl-btn" target="_blank" rel="noopener" href="{href}">{label}</a>')
             else:
                 parts.append(f'<a class="dl-btn" href="{file_path}" download>{label}</a>')
@@ -52,21 +68,32 @@ def asset_page_content_standalone(meta, site_url=""):
     
     # Interactive HTML chart takes priority
     if 'html' in files:
-        # Use relative path for iframe: extract just the filename
+        # Use absolute URL for iframe for consistency
         html_path = files["html"]
-        if html_path.startswith('assets/'):
-            # Extract filename from assets/slug/filename.html  
-            html_path = html_path.split('/')[-1]  # Get just the filename
-        body.append(f'<div class="chart-embed"><iframe src="{html_path}" loading="lazy" allowfullscreen style="width:100%;height:600px;border:1px solid #ddd;border-radius:4px;"></iframe></div>')
+        if site_url and html_path.startswith('assets/'):
+            # Convert to absolute URL
+            chart_url = abs_url_standalone(html_path, site_url)
+        elif html_path.startswith('assets/'):
+            # Extract filename from assets/slug/filename.html for relative fallback
+            chart_url = html_path.split('/')[-1]
+        else:
+            chart_url = html_path
+        body.append(f'<div class="chart-embed"><iframe src="{chart_url}" loading="lazy" allowfullscreen style="width:100%;height:600px;border:1px solid #ddd;border-radius:4px;"></iframe></div>')
     elif atype == 'figure':
         # Prefer SVG if present for crispness
         img = files.get('svg') or files.get('png')
         if img:
-            # Use relative path for images: extract just the filename
+            # Use absolute URL for images for consistency
             img_path = img
-            if img_path.startswith('assets/'):
-                img_path = img_path.split('/')[-1]  # Get just the filename
-            body.append(f'<p><img alt="{title}" src="{img_path}"/></p>')
+            if site_url and img_path.startswith('assets/'):
+                # Convert to absolute URL
+                img_url = abs_url_standalone(img_path, site_url)
+            elif img_path.startswith('assets/'):
+                # Extract filename for relative fallback
+                img_url = img_path.split('/')[-1]
+            else:
+                img_url = img_path
+            body.append(f'<p><img alt="{title}" src="{img_url}"/></p>')
     
     body.append(f'<div class="download-buttons">{_downloads_html(files, site_url)}</div>')
     
@@ -74,7 +101,7 @@ def asset_page_content_standalone(meta, site_url=""):
     body.append('<h3>Embed</h3>')
     base_url = site_url or ""
     target = f"assets/{slug}-embed/"
-    embed_url = abs_url(target, site_url) if site_url else target
+    embed_url = abs_url_standalone(target, site_url) if site_url else target
     body.append(f'<pre><code>&lt;iframe src="{embed_url}" width="800" height="480" loading="lazy"&gt;&lt;/iframe&gt;</code></pre>')
     return "\n".join(body)
 
@@ -96,9 +123,10 @@ def embed_page_content_standalone(meta, site_url=""):
         return f"""
 <style>
   html,body{{margin:0;padding:0;overflow:hidden;background:transparent}}
-  .chart-html{{width:100%;border:0;height:1px}}
+  /* Fallback so it's never invisible even if JS fails */
+  .chart-html{{width:100%;border:0;min-height:560px}}
 </style>
-<iframe class="chart-html" src="{relative_url}" loading="lazy"></iframe>
+<iframe class="chart-html" src="{relative_url}" loading="eager"></iframe>
 <script>
 (function(){{
   var child = document.querySelector(".chart-html");
@@ -108,25 +136,22 @@ def embed_page_content_standalone(meta, site_url=""):
       var h = Math.max(
         doc.documentElement.scrollHeight || 0,
         doc.body ? doc.body.scrollHeight : 0,
-        240
+        300
       );
-      // resize our own page (just in case)
+      // 1) make the inner chart visible
+      child.style.height = h + "px";
+      // 2) size our own page (defensive)
       document.documentElement.style.height = h + "px";
       document.body.style.height = h + "px";
-      // notify the parent page (the report) to resize its iframe
+      // 3) ask parent to resize the outer iframe (nice-to-have)
       parent && parent.postMessage({{type:"plotly-embed-size", height:h, slug:"{slug}" }}, "*");
     }} catch(e) {{}}
   }}
-  // recompute on load and on changes
-  child.addEventListener("load", function(){{ setTimeout(sendHeight, 50); }});
+  child.addEventListener("load", function(){{ setTimeout(sendHeight, 60); }});
   var ro = new ResizeObserver(sendHeight);
   ro.observe(document.documentElement);
-  // periodic safety check (Plotly relayouts, fonts, etc.)
-  setInterval(sendHeight, 500);
-  // reply to ping
-  window.addEventListener("message", function(e){{
-    if ((e.data||{{}}).type === "plotly-embed-ping") sendHeight();
-  }});
+  setInterval(sendHeight, 600);      // safety for late relayouts
+  window.addEventListener("message", function(e){{ if ((e.data||{{}}).type==="plotly-embed-ping") sendHeight(); }});
 }})();
 </script>
 """

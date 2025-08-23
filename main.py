@@ -3,7 +3,7 @@
 from macros.downloads import render_download_buttons, embed_snippet, today
 from macros.metadata import render_report_meta
 from macros.assets import asset_page_content_standalone, embed_page_content_standalone
-from macros.asset_pages import embed_iframe
+from macros.asset_pages import embed_iframe_standalone
 
 def define_env(env):
     # Get site URL from MkDocs config for absolute URL generation
@@ -20,9 +20,13 @@ def define_env(env):
         return embed_snippet(slug, width, height, site_url)
     
     def _embed_iframe(slug, width=800, height=480, title=None):
-        # Use the new auto-sizing iframe with responsive behavior
+        # Use the new auto-sizing iframe with consistent absolute URL generation
         title = title or slug
-        url = f"{site_url.rstrip('/')}/assets/{slug}-embed/" if site_url else f"assets/{slug}-embed/"
+        # Create absolute URL using site_url
+        if site_url:
+            url = f"{site_url}/assets/{slug}-embed/"
+        else:
+            url = f"assets/{slug}-embed/"
         # Note: height here is just a starter; script will set the real height.
         return (f'<iframe src="{url}" width="100%" height="{height}" title="{title}" '
                 f'loading="lazy" style="border:0;" data-embed-autoheight data-embed-slug="{slug}"></iframe>')
