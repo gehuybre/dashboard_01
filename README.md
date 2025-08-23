@@ -3,17 +3,25 @@
 A modular, maintainable, and scalable template for publishing **data analysis reports** from VS Code + Git + GitHub.  
 Write `.md` or `.ipynb`, commit, and your site auto-updates via GitHub Actions.
 
+🌐 **Live Site**: https://gehuybre.github.io/dashboard_01/
+
 ## Quick start
 
 ```bash
-# 1) Create a new repo from this template and clone it
-# 2) Local preview
-pip install -r requirements.txt
-mkdocs serve
+# 1) Clone this repository
+git clone https://github.com/gehuybre/dashboard_01.git
+cd dashboard_01
 
-# 3) Enable GitHub Pages
-#    - Settings → Pages → Build and deployment → Source: GitHub Actions
-#    - Push to main, the workflow will deploy automatically
+# 2) Set up virtual environment with uv
+uv venv
+source .venv/bin/activate
+uv pip install -r pyproject.toml
+
+# 3) Local preview
+PYTHONPATH=/path/to/dashboard_01 mkdocs serve
+
+# 4) GitHub Pages is already configured via GitHub Actions
+#    - Just push to main branch and the site will auto-deploy
 ```
 
 ## Add a new report
