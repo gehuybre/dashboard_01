@@ -47,6 +47,19 @@ def load_theme() -> Theme:
         title_size=charts_config["title_size"]
     )
 
+def apply_theme_and_responsive(fig, theme: Theme):
+    """Apply theme and responsive settings to a figure"""
+    fig.update_layout(
+        template=theme.template,
+        colorway=theme.colors,
+        font=dict(family=theme.font),
+        title_font_size=theme.title_size,
+        # Responsive margins and sizing
+        margin=dict(l=40, r=10, t=40, b=40),
+        autosize=True
+    )
+    return fig
+
 @chart("line_multi")
 def line_multi(data_path, x, ys, title):
     """Multi-line chart builder"""
@@ -55,13 +68,8 @@ def line_multi(data_path, x, ys, title):
     
     fig = px.line(df, x=x, y=ys, title=title)
     
-    # Apply theme
-    fig.update_layout(
-        template=theme.template,
-        colorway=theme.colors,
-        font=dict(family=theme.font),
-        title_font_size=theme.title_size,
-    )
+    # Apply theme and responsive settings
+    apply_theme_and_responsive(fig, theme)
     
     # Style traces
     fig.update_traces(line=dict(width=2))
@@ -76,13 +84,8 @@ def bar_grouped(data_path, x, y, color, title):
     
     fig = px.bar(df, x=x, y=y, color=color, title=title, barmode='group')
     
-    # Apply theme
-    fig.update_layout(
-        template=theme.template,
-        colorway=theme.colors,
-        font=dict(family=theme.font),
-        title_font_size=theme.title_size,
-    )
+    # Apply theme and responsive settings
+    apply_theme_and_responsive(fig, theme)
     
     return fig
 
@@ -97,13 +100,8 @@ def scatter_trend(data_path, x, y, color=None, title="", trendline=True):
         trendline="ols" if trendline else None
     )
     
-    # Apply theme
-    fig.update_layout(
-        template=theme.template,
-        colorway=theme.colors,
-        font=dict(family=theme.font),
-        title_font_size=theme.title_size,
-    )
+    # Apply theme and responsive settings
+    apply_theme_and_responsive(fig, theme)
     
     return fig
 
@@ -115,13 +113,8 @@ def area_filled(data_path, x, y, color=None, title=""):
     
     fig = px.area(df, x=x, y=y, color=color, title=title)
     
-    # Apply theme
-    fig.update_layout(
-        template=theme.template,
-        colorway=theme.colors,
-        font=dict(family=theme.font),
-        title_font_size=theme.title_size,
-    )
+    # Apply theme and responsive settings
+    apply_theme_and_responsive(fig, theme)
     
     return fig
 

@@ -14,6 +14,10 @@ De data toont duidelijke trends in verschillende categorieën van bouwvergunning
 
 De onderstaande interactieve grafiek toont de evolutie van vergunningsaanvragen over tijd. U kunt inzoomen, gegevens selecteren en de grafiek exporteren.
 
+{{ embed_iframe("Embuild_vergunningen_story") }}
+
+### Downloads
+
 {{ render_download_buttons({
   "slug": "Embuild_vergunningen_story",
   "title": "Vergunningsaanvragen (interactief)",

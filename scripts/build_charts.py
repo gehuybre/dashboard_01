@@ -102,7 +102,9 @@ def write_html(fig, output_path: Path):
                 'width': 1000,
                 'scale': 2
             }
-        }
+        },
+        default_width="100%",   # container width
+        default_height="100%",  # height controlled by auto-height script
     )
 
 def build_all():

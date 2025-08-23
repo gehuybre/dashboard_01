@@ -1,6 +1,18 @@
 import os, io, json, textwrap
 from datetime import date
 
+def define_env(env):
+    """Define macros for MkDocs"""
+    site_url = (env.conf.get("site_url") or "").rstrip("/")
+    
+    @env.macro
+    def asset_page_content(meta):
+        return asset_page_content_standalone(meta, site_url)
+    
+    @env.macro  
+    def embed_page_content(meta):
+        return embed_page_content_standalone(meta, site_url)
+
 def abs_url(path: str, site_url: str) -> str:
     """Convert a relative path to an absolute URL using site_url"""
     if path.startswith(("http://", "https://")):
@@ -25,7 +37,7 @@ def _downloads_html(files, site_url=""):
                 parts.append(f'<a class="dl-btn" href="{file_path}" download>{label}</a>')
     return " ".join(parts)
 
-def asset_page_content(meta, site_url=""):
+def asset_page_content_standalone(meta, site_url=""):
     """ Generate the main content for an asset detail page """
     from pathlib import Path
     import yaml
@@ -66,20 +78,57 @@ def asset_page_content(meta, site_url=""):
     body.append(f'<pre><code>&lt;iframe src="{embed_url}" width="800" height="480" loading="lazy"&gt;&lt;/iframe&gt;</code></pre>')
     return "\n".join(body)
 
-def embed_page_content(meta, site_url=""):
-    """ Generate the content for an asset embed page (minimal, iframe-friendly) """
+def embed_page_content_standalone(meta, site_url=""):
+    """ Generate the content for an asset embed page with auto-height functionality """
     files = meta.get('files',{})
     title = meta.get('title', meta.get('slug', 'Asset'))
+    slug = meta.get('slug', '')
     
     if 'html' in files:
         # Use the full path from asset.yml and convert to absolute URL
         html_path = files["html"]
         absolute_url = abs_url(html_path, site_url) if site_url else html_path
-        return f'<iframe src="{absolute_url}" loading="lazy" allowfullscreen style="width:100%;height:600px;border:0;"></iframe>'
+        return f"""
+<style>
+  html,body{{margin:0;padding:0;overflow:hidden;background:transparent}}
+  .chart-html{{width:100%;border:0;height:1px}}
+</style>
+<iframe class="chart-html" src="{absolute_url}" loading="lazy"></iframe>
+<script>
+(function(){{
+  var child = document.querySelector(".chart-html");
+  function sendHeight() {{
+    try {{
+      var doc = child.contentDocument || child.contentWindow.document;
+      var h = Math.max(
+        doc.documentElement.scrollHeight || 0,
+        doc.body ? doc.body.scrollHeight : 0,
+        240
+      );
+      // resize our own page (just in case)
+      document.documentElement.style.height = h + "px";
+      document.body.style.height = h + "px";
+      // notify the parent page (the report) to resize its iframe
+      parent && parent.postMessage({{type:"plotly-embed-size", height:h, slug:"{slug}" }}, "*");
+    }} catch(e) {{}}
+  }}
+  // recompute on load and on changes
+  child.addEventListener("load", function(){{ setTimeout(sendHeight, 50); }});
+  var ro = new ResizeObserver(sendHeight);
+  ro.observe(document.documentElement);
+  // periodic safety check (Plotly relayouts, fonts, etc.)
+  setInterval(sendHeight, 500);
+  // reply to ping
+  window.addEventListener("message", function(e){{
+    if ((e.data||{{}}).type === "plotly-embed-ping") sendHeight();
+  }});
+}})();
+</script>
+"""
     elif 'png' in files or 'svg' in files:
         # Use the full path from asset.yml and convert to absolute URL
         img_path = files.get('svg') or files.get('png')
         absolute_url = abs_url(img_path, site_url) if site_url else img_path
-        return f'<img alt="{title}" src="{absolute_url}" style="max-width:100%;height:auto;" />'
+        return f'<img alt="{title}" src="{absolute_url}" style="max-width:100%;border:0;" />'
     else:
         return "<!-- no embeddable content -->"
