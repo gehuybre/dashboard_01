@@ -58,10 +58,12 @@ def asset_page_content(meta, site_url=""):
     
     body.append(f'<div class="download-buttons">{_downloads_html(files, site_url)}</div>')
     
-    # Embed snippet
-    slug = meta.get('slug')
+    # Embed snippet using absolute URLs
     body.append('<h3>Embed</h3>')
-    body.append(f'<pre><code>&lt;iframe src="assets/{slug}-embed/" width="800" height="480" loading="lazy"&gt;&lt;/iframe&gt;</code></pre>')
+    base_url = site_url or ""
+    target = f"assets/{slug}-embed/"
+    embed_url = abs_url(target, site_url) if site_url else target
+    body.append(f'<pre><code>&lt;iframe src="{embed_url}" width="800" height="480" loading="lazy"&gt;&lt;/iframe&gt;</code></pre>')
     return "\n".join(body)
 
 def embed_page_content(meta, site_url=""):
@@ -70,16 +72,14 @@ def embed_page_content(meta, site_url=""):
     title = meta.get('title', meta.get('slug', 'Asset'))
     
     if 'html' in files:
-        # Use relative path for iframe: extract just the filename
+        # Use the full path from asset.yml and convert to absolute URL
         html_path = files["html"]
-        if html_path.startswith('assets/'):
-            html_path = html_path.split('/')[-1]  # Get just the filename
-        return f'<iframe src="{html_path}" loading="lazy" allowfullscreen style="width:100%;height:600px;border:0;"></iframe>'
+        absolute_url = abs_url(html_path, site_url) if site_url else html_path
+        return f'<iframe src="{absolute_url}" loading="lazy" allowfullscreen style="width:100%;height:600px;border:0;"></iframe>'
     elif 'png' in files or 'svg' in files:
-        # Use relative path for images: extract just the filename  
+        # Use the full path from asset.yml and convert to absolute URL
         img_path = files.get('svg') or files.get('png')
-        if img_path.startswith('assets/'):
-            img_path = img_path.split('/')[-1]  # Get just the filename
-        return f'<img alt="{title}" src="{img_path}" style="max-width:100%;height:auto;" />'
+        absolute_url = abs_url(img_path, site_url) if site_url else img_path
+        return f'<img alt="{title}" src="{absolute_url}" style="max-width:100%;height:auto;" />'
     else:
         return "<!-- no embeddable content -->"

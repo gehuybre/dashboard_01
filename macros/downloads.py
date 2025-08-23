@@ -26,10 +26,10 @@ def render_download_buttons(asset):
 </div>
 '''.strip()
 
-def embed_snippet(slug, width=800, height=480):
+def embed_snippet(slug, width=800, height=480, site_url=""):
     """Return a ready-to-copy <iframe> snippet for an asset embed page."""
-    # For embed snippets, use the full GitHub Pages URL so it works on external sites
-    base_url = "https://gehuybre.github.io/dashboard_01"
+    # Use the provided site_url or fall back to the hardcoded one
+    base_url = site_url or "https://gehuybre.github.io/dashboard_01"
     src = f'{base_url}/assets/{slug}-embed/'
     # Return as a code block that users can copy
     iframe_code = f'<iframe src="{src}" width="{int(width)}" height="{int(height)}" loading="lazy" title="{slug}"></iframe>'
