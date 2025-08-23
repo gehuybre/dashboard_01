@@ -109,6 +109,33 @@ summary: One-line summary.
 
 > The build script auto-generates **/assets/<slug>/** detail pages and **/assets/<slug>-embed/** pages with automatic iframe embedding for HTML charts.
 
+### Asset.yml Schema
+
+Each asset directory must contain a valid `asset.yml` file with this structure:
+
+```yaml
+# Required fields
+slug: your-asset-slug          # Must match directory name
+title: "Your Asset Title"      # Display name
+files:                         # File references
+  csv: assets/your-slug/data.csv        # Use full assets/ path
+  html: assets/your-slug/chart.html     # Interactive chart (optional)
+  png: assets/your-slug/image.png       # Static image (optional)
+
+# Optional fields  
+summary: "Brief description"   # One-line summary
+tags: [tag1, tag2]            # Category tags
+type: "figure"                # Type: figure, table, dataset
+```
+
+**Key Rules**:
+- `slug` must match the directory name exactly
+- All file paths must start with `assets/<slug>/`
+- Referenced files must exist in the `docs/` directory
+- HTML files automatically get iframe embedding
+
+Run `uv run python scripts/validate_assets.py` to check for errors.
+
 ## Theme Configuration
 
 Customize colors, fonts, and chart appearance in `docs/_data/site.yml`:
@@ -135,14 +162,17 @@ All charts automatically use these theme tokens for consistency.
 # Install dependencies
 uv sync
 
+# Validate asset configuration (recommended before building)
+uv run python scripts/validate_assets.py
+
 # Build interactive charts
 uv run python scripts/build_charts.py
 
 # Serve locally
 uv run mkdocs serve
 
-# Build static site
-uv run mkdocs build
+# Build static site (full production build)
+uv run mkdocs build --strict
 
 # Add new Python dependencies
 uv add package-name
@@ -150,6 +180,16 @@ uv add package-name
 # Update dependencies
 uv lock --upgrade
 ```
+
+### Build Order (Important!)
+
+For reliable builds, always follow this order:
+
+1. **Validate assets**: `uv run python scripts/validate_assets.py`
+2. **Build charts**: `uv run python scripts/build_charts.py` 
+3. **Build site**: `uv run mkdocs build --strict`
+
+This ensures asset metadata is valid before generating charts and pages.
 
 ## Search & tags
 

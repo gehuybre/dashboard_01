@@ -4,6 +4,5 @@ type: dataset
 summary: Sales data and analysis for Q3 2025 performance review
 tags: [sales, Q3, analysis]
 files:
-  sales_data.csv: "Raw sales data for Q3 2025"
-  sales_data.xlsx: "Formatted sales data with calculations"
-  sales_chart.png: "Generated sales trend chart"
+  csv: assets/sales-analysis/sales_data.csv
+  html: assets/sales-analysis/sales-overview.html

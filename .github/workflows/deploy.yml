@@ -38,6 +38,16 @@ jobs:
         uv venv
         uv pip install -r pyproject.toml
     
+    - name: Validate assets
+      run: |
+        source .venv/bin/activate
+        python scripts/validate_assets.py
+    
+    - name: Build interactive charts
+      run: |
+        source .venv/bin/activate
+        python scripts/build_charts.py
+    
     - name: Build MkDocs
       run: |
         source .venv/bin/activate
