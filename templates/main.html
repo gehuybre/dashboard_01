@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{# Hide header/nav/footer & toc on embed pages #}
+{% block header %}{% if not (page and page.meta and page.meta.embed) %}{{ super() }}{% endif %}{% endblock %}
+{% block tabs %}{% if not (page and page.meta and page.meta.embed) %}{{ super() }}{% endif %}{% endblock %}
+{% block footer %}{% if not (page and page.meta and page.meta.embed) %}{{ super() }}{% endif %}{% endblock %}
+{% block toc %}{% if not (page and page.meta and page.meta.embed) %}{{ super() }}{% endif %}{% endblock %}

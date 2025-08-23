@@ -1,0 +1,16 @@
+/* Global site adjustments */
+.report-meta { margin: 0 0 1rem 0; font-size: 0.95rem; }
+.report-meta__line { color: var(--md-default-fg-color--light); }
+.report-meta__author { font-weight: 600; }
+.report-meta__summary { margin-top: .25rem; color: var(--md-default-fg-color--light); }
+.meta-tags { list-style: none; padding: 0; margin: .5rem 0 0 0; display: flex; flex-wrap: wrap; gap: .35rem; }
+.meta-tags li { background: var(--md-accent-fg-color--transparent); border: 1px solid var(--md-accent-fg-color); border-radius: .25rem; padding: .1rem .4rem; font-size: .8rem; }
+
+.download-box { border: 1px solid var(--md-default-fg-color--lightest); border-radius: .25rem; padding: .5rem .75rem; margin: .5rem 0 1rem; }
+.download-title { font-weight: 600; margin-bottom: .25rem; }
+.download-buttons { display: flex; gap: .5rem; flex-wrap: wrap; }
+.dl-btn { border: 1px solid var(--md-primary-fg-color); padding: .25rem .5rem; border-radius: .25rem; text-decoration: none; font-size: .85rem; }
+.dl-btn:hover { background: var(--md-primary-fg-color--transparent); }
+
+/* Minimal padding on embed pages */
+[data-md-component="content"] .md-content__inner:has([data-embed]) { padding-top: 0; }

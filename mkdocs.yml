@@ -1,0 +1,64 @@
+site_name: Data Analysis Reports
+site_description: Modular, maintainable and scalable GitHub Pages site for publishing data analysis reports
+repo_url: https://github.com/gehuybre/dashboard_01
+repo_name: gehuybre/dashboard_01
+site_url: https://gehuybre.github.io/dashboard_01/
+
+docs_dir: docs
+
+theme:
+  name: material
+  custom_dir: templates
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+
+extra_css:
+  - static/css/site.css
+extra_javascript:
+  - static/js/embed.js
+
+plugins:
+  - search
+  - mkdocs-jupyter:
+      execute: false    # commit .ipynb to /docs/reports and it renders
+      include_source: true
+  - macros:
+      include_yaml:
+        - docs/_data/site.yml
+  - gen-files:
+      scripts:
+        - scripts/gen_assets_pages.py
+  - minify:
+      minify_html: true
+  - tags
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - pymdownx.emoji
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.snippets
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Reports:
+      - reports/sample-report.md
+  - Assets:
+      - assets/index.md
+  - Guides:
+      - guides/user-guide.md
+      - guides/developer-guide.md
+      - guides/api-embedding.md

@@ -1,0 +1,3 @@
+# Centralized site data (referenced by macros if needed)
+org: Your Organization
+default_author: Your Name
