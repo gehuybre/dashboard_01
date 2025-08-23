@@ -28,10 +28,12 @@ def render_download_buttons(asset):
 
 def embed_snippet(slug, width=800, height=480):
     """Return a ready-to-copy <iframe> snippet for an asset embed page."""
-    # Works even if site_url isn't set; use a relative path
-    src = f'assets/{slug}-embed/'
-    # match Material's default content width
-    return f'<iframe src="{src}" width="{int(width)}" height="{int(height)}" loading="lazy" title="{slug}"></iframe>'
+    # For embed snippets, use the full GitHub Pages URL so it works on external sites
+    base_url = "https://gehuybre.github.io/dashboard_01"
+    src = f'{base_url}/assets/{slug}-embed/'
+    # Return as a code block that users can copy
+    iframe_code = f'<iframe src="{src}" width="{int(width)}" height="{int(height)}" loading="lazy" title="{slug}"></iframe>'
+    return f'```html\n{iframe_code}\n```'
 
 def today():
     """Return today's date in a readable format."""
