@@ -85,15 +85,20 @@ def embed_page_content_standalone(meta, site_url=""):
     slug = meta.get('slug', '')
     
     if 'html' in files:
-        # Use the full path from asset.yml and convert to absolute URL
+        # For embed pages, construct the correct relative path to the chart
         html_path = files["html"]
-        absolute_url = abs_url(html_path, site_url) if site_url else html_path
+        if html_path.startswith('assets/'):
+            # Convert assets/slug/filename.html to ../slug/filename.html for embed pages
+            path_parts = html_path.split('/')
+            relative_url = f"../{'/'.join(path_parts[1:])}"  # Remove 'assets' and add '..'
+        else:
+            relative_url = html_path
         return f"""
 <style>
   html,body{{margin:0;padding:0;overflow:hidden;background:transparent}}
   .chart-html{{width:100%;border:0;height:1px}}
 </style>
-<iframe class="chart-html" src="{absolute_url}" loading="lazy"></iframe>
+<iframe class="chart-html" src="{relative_url}" loading="lazy"></iframe>
 <script>
 (function(){{
   var child = document.querySelector(".chart-html");
@@ -126,9 +131,12 @@ def embed_page_content_standalone(meta, site_url=""):
 </script>
 """
     elif 'png' in files or 'svg' in files:
-        # Use the full path from asset.yml and convert to absolute URL
+        # Use relative path for images
         img_path = files.get('svg') or files.get('png')
-        absolute_url = abs_url(img_path, site_url) if site_url else img_path
-        return f'<img alt="{title}" src="{absolute_url}" style="max-width:100%;border:0;" />'
+        if img_path.startswith('assets/'):
+            # Convert assets/slug/filename.ext to ../slug/filename.ext for embed pages
+            path_parts = img_path.split('/')
+            img_path = f"../{'/'.join(path_parts[1:])}"  # Remove 'assets' and add '..'
+        return f'<img alt="{title}" src="{img_path}" style="max-width:100%;border:0;" />'
     else:
         return "<!-- no embeddable content -->"
