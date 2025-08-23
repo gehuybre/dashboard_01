@@ -1,26 +1,26 @@
 # Chart specifications - declarative chart definitions
 charts:
   - name: vergunningen-trend
-    type: line_multi                # refers to a chart "class"
-    data: docs/assets/Embuild_vergunningen_story/graph_data_export.csv
+    type: line_multi
     params:
+      data_path: docs/assets/Embuild_vergunningen_story/graph_data_export.csv
       x: Datum
       ys: ["Nieuwbouw", "Verbouwen of hergebruik", "Sloop"]
-      title: Vergunningsaanvragen (niveau)
+      title: "Vergunningsaanvragen (niveau)"
     output: docs/assets/Embuild_vergunningen_story/vergunningen-trend.html
     meta:
       slug: Embuild_vergunningen_story
       alt: Trend van vergunningen per categorie sinds 2018
 
-  # Example: Sales data bar chart (if sales_data.csv exists)
+  # Example: Sales data bar chart
   - name: sales-overview
     type: bar_grouped
-    data: docs/assets/sales-analysis/sales_data.csv
     params:
+      data_path: docs/assets/sales-analysis/sales_data.csv
       x: month
       y: sales
       color: product
-      title: Monthly Sales by Product
+      title: "Monthly Sales by Product"
     output: docs/assets/sales-analysis/sales-overview.html
     meta:
       slug: sales-analysis

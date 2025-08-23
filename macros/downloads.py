@@ -1,12 +1,13 @@
 from urllib.parse import quote
+from datetime import date
 
 def _button(label, href):
     return f'<a class="dl-btn" href="{href}" download>{label}</a>'
 
 def _buttons_for_files(files):
-    # files is a dict like {'csv': 'assets/foo/foo.csv', 'xlsx': 'assets/foo/foo.xlsx', ...}
-    order = ["csv", "xlsx", "png", "svg"]
-    labels = {"csv":"CSV","xlsx":"XLSX","png":"PNG","svg":"SVG"}
+    # files is a dict like {'csv': 'assets/foo/foo.csv', 'xlsx': 'assets/foo/foo.xlsx', 'html': 'assets/foo/chart.html', ...}
+    order = ["html", "csv", "xlsx", "png", "svg"]
+    labels = {"html":"HTML","csv":"CSV","xlsx":"XLSX","png":"PNG","svg":"SVG"}
     parts = []
     for ext in order:
         if files and ext in files:
@@ -31,3 +32,7 @@ def embed_snippet(slug, width=800, height=480):
     src = f'assets/{slug}-embed/'
     # match Material's default content width
     return f'<iframe src="{src}" width="{int(width)}" height="{int(height)}" loading="lazy" title="{slug}"></iframe>'
+
+def today():
+    """Return today's date in a readable format."""
+    return date.today().strftime("%d %B %Y")

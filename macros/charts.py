@@ -1,11 +1,10 @@
 # Chart registry and theme system
 from dataclasses import dataclass
-from typing import Callable, Dict, List
+from typing import Callable, Dict
 from pathlib import Path
 import yaml
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 
 # Global registry for chart types
 _REGISTRY: Dict[str, Callable] = {}
@@ -20,12 +19,10 @@ def chart(name: str):
 @dataclass
 class Theme:
     """Theme configuration for charts"""
-    colorway: List[str]
+    colors: list
     template: str
     font: str
     title_size: int
-    axis_size: int
-    grid: bool
 
 def load_theme() -> Theme:
     """Load theme configuration from site.yml"""
@@ -33,12 +30,10 @@ def load_theme() -> Theme:
     if not site_path.exists():
         # Fallback theme if site.yml doesn't exist
         return Theme(
-            colorway=["#005EB8", "#00A3E0", "#FFC300"],
+            colors=["#005EB8", "#00A3E0", "#FFC300"],
             template="simple_white",
             font="Inter, sans-serif",
-            title_size=20,
-            axis_size=12,
-            grid=True
+            title_size=20
         )
     
     site = yaml.safe_load(site_path.read_text())
@@ -46,117 +41,93 @@ def load_theme() -> Theme:
     charts_config = site["charts"]
     
     return Theme(
-        colorway=[c["primary"], c["secondary"], c["accent"], c.get("neutral", "#5F6A6A"), c.get("gray", "#D5D8DC")],
+        colors=[c["primary"], c["secondary"], c["accent"]],
         template=charts_config.get("template", "simple_white"),
         font=charts_config["font_family"],
-        title_size=charts_config["title_size"],
-        axis_size=charts_config.get("axis_size", 12),
-        grid=charts_config.get("grid", True)
+        title_size=charts_config["title_size"]
     )
 
 @chart("line_multi")
-def line_multi(data: str, params: dict):
+def line_multi(data_path, x, ys, title):
     """Multi-line chart builder"""
-    th = load_theme()
-    df = pd.read_csv(data)
+    theme = load_theme()
+    df = pd.read_csv(data_path)
     
-    fig = px.line(
-        df, 
-        x=params["x"], 
-        y=params["ys"], 
-        title=params.get("title", "")
-    )
+    fig = px.line(df, x=x, y=ys, title=title)
     
     # Apply theme
     fig.update_layout(
-        template=th.template,
-        colorway=th.colorway,
-        font=dict(family=th.font),
-        title_font_size=th.title_size,
-        xaxis=dict(tickfont=dict(size=th.axis_size)),
-        yaxis=dict(tickfont=dict(size=th.axis_size)),
-        showlegend=True
+        template=theme.template,
+        colorway=theme.colors,
+        font=dict(family=theme.font),
+        title_font_size=theme.title_size,
     )
     
     # Style traces
     fig.update_traces(line=dict(width=2))
     
-    # Grid settings
-    if th.grid:
-        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
-    
     return fig
 
 @chart("bar_grouped")
-def bar_grouped(data: str, params: dict):
+def bar_grouped(data_path, x, y, color, title):
     """Grouped bar chart builder"""
-    th = load_theme()
-    df = pd.read_csv(data)
+    theme = load_theme()
+    df = pd.read_csv(data_path)
     
-    fig = px.bar(
-        df,
-        x=params["x"],
-        y=params["y"],
-        color=params.get("color"),
-        title=params.get("title", ""),
-        barmode='group'
-    )
+    fig = px.bar(df, x=x, y=y, color=color, title=title, barmode='group')
     
     # Apply theme
     fig.update_layout(
-        template=th.template,
-        colorway=th.colorway,
-        font=dict(family=th.font),
-        title_font_size=th.title_size,
-        xaxis=dict(tickfont=dict(size=th.axis_size)),
-        yaxis=dict(tickfont=dict(size=th.axis_size))
+        template=theme.template,
+        colorway=theme.colors,
+        font=dict(family=theme.font),
+        title_font_size=theme.title_size,
     )
-    
-    if th.grid:
-        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
     
     return fig
 
 @chart("scatter_trend")
-def scatter_trend(data: str, params: dict):
+def scatter_trend(data_path, x, y, color=None, title="", trendline=True):
     """Scatter plot with trend line"""
-    th = load_theme()
-    df = pd.read_csv(data)
+    theme = load_theme()
+    df = pd.read_csv(data_path)
     
     fig = px.scatter(
-        df,
-        x=params["x"],
-        y=params["y"],
-        color=params.get("color"),
-        title=params.get("title", ""),
-        trendline="ols" if params.get("trendline", True) else None
+        df, x=x, y=y, color=color, title=title,
+        trendline="ols" if trendline else None
     )
     
     # Apply theme
     fig.update_layout(
-        template=th.template,
-        colorway=th.colorway,
-        font=dict(family=th.font),
-        title_font_size=th.title_size,
-        xaxis=dict(tickfont=dict(size=th.axis_size)),
-        yaxis=dict(tickfont=dict(size=th.axis_size))
+        template=theme.template,
+        colorway=theme.colors,
+        font=dict(family=theme.font),
+        title_font_size=theme.title_size,
     )
-    
-    if th.grid:
-        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
     
     return fig
 
-def build(chart_type: str, data: str, params: dict):
+@chart("area_filled")
+def area_filled(data_path, x, y, color=None, title=""):
+    """Area chart builder"""
+    theme = load_theme()
+    df = pd.read_csv(data_path)
+    
+    fig = px.area(df, x=x, y=y, color=color, title=title)
+    
+    # Apply theme
+    fig.update_layout(
+        template=theme.template,
+        colorway=theme.colors,
+        font=dict(family=theme.font),
+        title_font_size=theme.title_size,
+    )
+    
+    return fig
+
+def build(chart_type: str, **kwargs):
     """Build a chart using the registry"""
     if chart_type not in _REGISTRY:
         raise ValueError(f"Unknown chart type: {chart_type}. Available types: {list(_REGISTRY.keys())}")
     
-    return _REGISTRY[chart_type](data, params)
-
-def list_chart_types() -> List[str]:
-    """List all available chart types"""
-    return list(_REGISTRY.keys())
+    return _REGISTRY[chart_type](**kwargs)

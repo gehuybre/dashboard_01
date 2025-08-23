@@ -11,8 +11,8 @@ Declarative YAML file that defines what charts to build:
 charts:
   - name: my-chart
     type: line_multi
-    data: path/to/data.csv
     params:
+      data_path: path/to/data.csv
       x: date_column
       ys: ["metric1", "metric2"]
       title: "My Chart Title"
@@ -45,16 +45,23 @@ Extensible registry of chart builders. Current chart types:
 - `line_multi`: Multi-line time series charts
 - `bar_grouped`: Grouped bar charts  
 - `scatter_trend`: Scatter plots with trend lines
+- `area_filled`: Filled area charts
 
 To add a new chart type:
 
 ```python
 @chart("my_new_type")
-def my_new_chart(data: str, params: dict):
-    th = load_theme()
-    df = pd.read_csv(data)
-    fig = px.my_chart_type(df, **params)
+def my_new_chart(data_path, x, y, title=""):
+    theme = load_theme()
+    df = pd.read_csv(data_path)
+    fig = px.my_chart_type(df, x=x, y=y, title=title)
     # Apply theme...
+    fig.update_layout(
+        template=theme.template,
+        colorway=theme.colors,
+        font=dict(family=theme.font),
+        title_font_size=theme.title_size,
+    )
     return fig
 ```
 

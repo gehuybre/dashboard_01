@@ -56,9 +56,11 @@ nav:
   - Home: index.md
   - Reports:
       - reports/sample-report.md
+      - reports/embuild-vergunningen-2025.md
   - Assets:
       - assets/index.md
   - Guides:
       - guides/user-guide.md
       - guides/developer-guide.md
       - guides/api-embedding.md
+      - guides/chart-system.md

@@ -60,11 +60,14 @@ def fingerprint(spec_item: dict) -> str:
     h = hashlib.sha256(spec_str).hexdigest()
     
     # Include data file mtime
-    data_path = Path(spec_item["data"])
-    if data_path.exists():
-        h += str(int(data_path.stat().st_mtime))
-    else:
-        print(f"Warning: Data file not found: {data_path}")
+    params = spec_item.get("params", {})
+    data_path_key = "data_path"
+    if data_path_key in params:
+        data_path = Path(params[data_path_key])
+        if data_path.exists():
+            h += str(int(data_path.stat().st_mtime))
+        else:
+            print(f"Warning: Data file not found: {data_path}")
     
     # Include theme file mtime
     theme_path = Path("docs/_data/site.yml")
@@ -132,8 +135,7 @@ def build_all():
                 print(f"  Building {name}...")
                 fig = build(
                     chart_type=item["type"],
-                    data=item["data"],
-                    params=item.get("params", {})
+                    **item.get("params", {})
                 )
                 
                 # Write HTML output

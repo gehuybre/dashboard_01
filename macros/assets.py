@@ -3,7 +3,7 @@ from datetime import date
 
 def _downloads_html(files):
     parts = []
-    mapping = {'csv':'CSV','xlsx':'XLSX','png':'PNG','svg':'SVG'}
+    mapping = {'csv':'CSV','xlsx':'XLSX','png':'PNG','svg':'SVG','html':'HTML'}
     for ext,label in mapping.items():
         if ext in files:
             parts.append(f'<a class="dl-btn" href="{files[ext]}" download>{label}</a>')
@@ -16,12 +16,18 @@ def asset_page_content(meta):
     files = meta.get('files',{})
     atype = meta.get('type','asset')
     body = []
-    if atype == 'figure':
+    
+    # Interactive HTML chart takes priority
+    if 'html' in files:
+        body.append(f'<div class="chart-embed"><iframe src="/{files["html"]}" loading="lazy" allowfullscreen style="width:100%;height:600px;border:1px solid #ddd;border-radius:4px;"></iframe></div>')
+    elif atype == 'figure':
         # Prefer SVG if present for crispness
         img = files.get('svg') or files.get('png')
         if img:
             body.append(f'<p><img alt="{title}" src="/{img if not img.startswith("/") else img}"/></p>')
+    
     body.append(f'<div class="download-buttons">{_downloads_html(files)}</div>')
+    
     # Embed snippet
     slug = meta.get('slug')
     body.append('<h3>Embed</h3>')
@@ -33,10 +39,15 @@ def embed_page_content(meta):
     title = meta.get('title', meta.get('slug','Asset'))
     files = meta.get('files',{})
     atype = meta.get('type','asset')
-    if atype == 'figure':
+    
+    # Interactive HTML chart takes priority for embedding
+    if 'html' in files:
+        return f'<iframe src="/{files["html"]}" loading="lazy" allowfullscreen style="width:100%;height:480px;border:0;"></iframe>'
+    elif atype == 'figure':
         img = files.get('svg') or files.get('png')
         if img:
             return f'<img alt="{title}" src="/{img if not img.startswith("/") else img}"/>'
+    
     # fallback: simple link bundle
     links = " ".join(f'<a href="{v}" download>{k.upper()}</a>' for k,v in files.items())
     return f'<div class="download-buttons">{links}</div>'
