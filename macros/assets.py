@@ -1,19 +1,31 @@
 import os, io, json, textwrap
 from datetime import date
 
-def _downloads_html(files):
+def abs_url(path: str, site_url: str) -> str:
+    """Convert a relative path to an absolute URL using site_url"""
+    if path.startswith(("http://", "https://")):
+        return path
+    return f"{site_url.rstrip('/')}/{path.lstrip('/')}"
+
+def _downloads_html(files, site_url=""):
     parts = []
     mapping = {'csv':'CSV','xlsx':'XLSX','png':'PNG','svg':'SVG','html':'HTML'}
     for ext,label in mapping.items():
         if ext in files:
-            # Use relative path - extract just the filename
+            # Use relative path for same-directory files - extract just the filename
             file_path = files[ext]
             if file_path.startswith('assets/'):
                 file_path = file_path.split('/')[-1]  # Get just the filename
-            parts.append(f'<a class="dl-btn" href="{file_path}" download>{label}</a>')
+            
+            # For HTML files, open in new tab; others download
+            if ext == 'html':
+                href = abs_url(file_path, site_url) if site_url else file_path
+                parts.append(f'<a class="dl-btn" target="_blank" rel="noopener" href="{href}">{label}</a>')
+            else:
+                parts.append(f'<a class="dl-btn" href="{file_path}" download>{label}</a>')
     return " ".join(parts)
 
-def asset_page_content(meta):
+def asset_page_content(meta, site_url=""):
     """ Generate the main content for an asset detail page """
     from pathlib import Path
     import yaml
@@ -44,7 +56,7 @@ def asset_page_content(meta):
                 img_path = img_path.split('/')[-1]  # Get just the filename
             body.append(f'<p><img alt="{title}" src="{img_path}"/></p>')
     
-    body.append(f'<div class="download-buttons">{_downloads_html(files)}</div>')
+    body.append(f'<div class="download-buttons">{_downloads_html(files, site_url)}</div>')
     
     # Embed snippet
     slug = meta.get('slug')
@@ -52,33 +64,22 @@ def asset_page_content(meta):
     body.append(f'<pre><code>&lt;iframe src="assets/{slug}-embed/" width="800" height="480" loading="lazy"&gt;&lt;/iframe&gt;</code></pre>')
     return "\n".join(body)
 
-def embed_page_content(meta):
-    """ Generate minimal content for iframe embedding """
-    from pathlib import Path
-    import yaml
-    
-    # Extract values from meta dict
-    slug = meta.get('slug')
-    title = meta.get('title', slug)
+def embed_page_content(meta, site_url=""):
+    """ Generate the content for an asset embed page (minimal, iframe-friendly) """
     files = meta.get('files',{})
-    atype = meta.get('type','asset')
+    title = meta.get('title', meta.get('slug', 'Asset'))
     
-    # Interactive HTML chart takes priority for embedding
     if 'html' in files:
-        # Use relative path for iframe: extract just the filename  
+        # Use relative path for iframe: extract just the filename
         html_path = files["html"]
         if html_path.startswith('assets/'):
             html_path = html_path.split('/')[-1]  # Get just the filename
-        return f'<iframe src="{html_path}" loading="lazy" allowfullscreen style="width:100%;height:480px;border:0;"></iframe>'
-    elif atype == 'figure':
-        img = files.get('svg') or files.get('png')
-        if img:
-            # Use relative path for images: extract just the filename
-            img_path = img
-            if img_path.startswith('assets/'):
-                img_path = img_path.split('/')[-1]  # Get just the filename
-            return f'<img alt="{title}" src="{img_path}"/>'
-    
-    # fallback: simple link bundle
-    links = " ".join(f'<a href="{v.split("/")[-1]}" download>{k.upper()}</a>' for k,v in files.items() if v.startswith('assets/'))
-    return f'<div class="download-buttons">{links}</div>'
+        return f'<iframe src="{html_path}" loading="lazy" allowfullscreen style="width:100%;height:600px;border:0;"></iframe>'
+    elif 'png' in files or 'svg' in files:
+        # Use relative path for images: extract just the filename  
+        img_path = files.get('svg') or files.get('png')
+        if img_path.startswith('assets/'):
+            img_path = img_path.split('/')[-1]  # Get just the filename
+        return f'<img alt="{title}" src="{img_path}" style="max-width:100%;height:auto;" />'
+    else:
+        return "<!-- no embeddable content -->"

@@ -5,10 +5,20 @@ from macros.metadata import render_report_meta
 from macros.assets import asset_page_content, embed_page_content
 
 def define_env(env):
+    # Get site URL from MkDocs config for absolute URL generation
+    site_url = (env.conf.get("site_url") or "").rstrip("/")
+    
+    # Create site-aware wrapper functions
+    def _asset_page_content(meta):
+        return asset_page_content(meta, site_url)
+    
+    def _embed_page_content(meta):
+        return embed_page_content(meta, site_url)
+    
     # Jinja macros exposed to Markdown
     env.macro(render_report_meta)
     env.macro(render_download_buttons)
     env.macro(embed_snippet)
     env.macro(today)
-    env.macro(asset_page_content)
-    env.macro(embed_page_content)
+    env.macro(_asset_page_content, "asset_page_content")
+    env.macro(_embed_page_content, "embed_page_content")
