@@ -30,7 +30,7 @@ tags: {tags}
 summary: {args.summary}
 ---
 
-{{{{ render_report_meta(meta) }}}}
+{{{{ render_report_meta() }}}}
 
 # {title}
 
