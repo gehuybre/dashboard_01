@@ -34,7 +34,20 @@ def main():
             # Write to output path
             out = Path(chart_spec["output"])
             out.parent.mkdir(parents=True, exist_ok=True)
-            pio.write_html(fig, file=out, full_html=True, include_plotlyjs='cdn')
+            pio.write_html(
+                fig, 
+                file=out, 
+                full_html=True, 
+                include_plotlyjs='cdn',
+                config={
+                    'displayModeBar': True,
+                    'displaylogo': False,
+                    'responsive': True,
+                    'modeBarButtonsToRemove': [
+                        'pan2d', 'lasso2d', 'select2d', 'autoScale2d'
+                    ]
+                }
+            )
             
             print("Wrote", out)
             

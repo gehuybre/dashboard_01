@@ -90,7 +90,18 @@ def write_html(fig, output_path: Path):
         config={
             'displayModeBar': True,
             'displaylogo': False,
-            'modeBarButtonsToRemove': ['pan2d', 'lasso2d', 'select2d']
+            'responsive': True,
+            'modeBarButtonsToRemove': [
+                'pan2d', 'lasso2d', 'select2d', 'autoScale2d',
+                'hoverClosestCartesian', 'hoverCompareCartesian'
+            ],
+            'toImageButtonOptions': {
+                'format': 'png',
+                'filename': 'chart',
+                'height': 600,
+                'width': 1000,
+                'scale': 2
+            }
         }
     )
 

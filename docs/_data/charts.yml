@@ -25,3 +25,27 @@ charts:
     meta:
       slug: sales-analysis
       alt: Monthly sales performance by product
+
+  # Test: Scatter plot with trendline (requires statsmodels)
+  - name: sales-scatter
+    type: scatter_trend
+    params:
+      data_path: docs/assets/sales-analysis/sales_data.csv
+      x: quantity
+      y: sales
+      color: product
+      title: "Sales vs Quantity Correlation"
+      trendline: true
+    output: docs/assets/sales-analysis/sales-scatter.html
+  # Test: Area chart example
+  - name: vergunningen-area
+    type: area_filled
+    params:
+      data_path: docs/assets/Embuild_vergunningen_story/graph_data_export.csv
+      x: Datum
+      y: Nieuwbouw
+      title: "Nieuwbouw Trend (Area Chart)"
+    output: docs/assets/Embuild_vergunningen_story/vergunningen-area.html
+    meta:
+      slug: Embuild_vergunningen_story
+      alt: Area chart showing new construction permits over time

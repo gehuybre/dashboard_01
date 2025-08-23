@@ -16,7 +16,8 @@ dependencies = [
     "matplotlib>=3.8",
     "openpyxl>=3.1",
     "ipywidgets>=8.1",
-    "plotly>=5.17"
+    "plotly>=5.17",
+    "statsmodels>=0.14"
 ]
 
 [build-system]
