@@ -56,7 +56,9 @@ def apply_theme_and_responsive(fig, theme: Theme):
         title_font_size=theme.title_size,
         # Responsive margins and sizing
         margin=dict(l=40, r=10, t=40, b=40),
-        autosize=True
+        autosize=True,
+        # Remove "variable" from legend title
+        legend=dict(title_text="")
     )
     
     # Y starts at 0
@@ -82,8 +84,11 @@ def line_multi(data_path, x, ys, title):
     # Apply theme and responsive settings
     apply_theme_and_responsive(fig, theme)
     
-    # Style traces
-    fig.update_traces(line=dict(width=2))
+    # Style traces and clean up hover template
+    fig.update_traces(
+        line=dict(width=2),
+        hovertemplate="%{fullData.name}<br>%{xaxis.title.text}=%{x}<br>%{yaxis.title.text}=%{y}<extra></extra>"
+    )
     
     return fig
 

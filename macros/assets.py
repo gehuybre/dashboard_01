@@ -124,6 +124,8 @@ def embed_page_content_standalone(meta, site_url=""):
 <style>
   html,body {{ margin:0; padding:0; overflow:hidden; background:transparent; }}
   .chart-html {{ width:100%; border:0; min-height:560px; display:block; }}
+  /* Hide theme title on *this* page only (embed pages) */
+  .md-content__inner h1, .md-typeset h1 {{ display: none !important; }}
 </style>
 <iframe class="chart-html" src="{relative_url}" loading="eager" referrerpolicy="no-referrer"></iframe>
 <script>
@@ -131,7 +133,7 @@ def embed_page_content_standalone(meta, site_url=""):
   var child = document.querySelector(".chart-html");
 
   function postHeight(h){{
-    var H = Math.max(340, Math.ceil(h) + 12);   // pad for modebar/ticks + extra padding
+    var H = Math.max(340, Math.ceil(h) + 24);   // increased padding for scrollbars
     child.style.height = H + "px";             // <-- make inner iframe tall enough
     document.documentElement.style.height = H + "px";
     document.body.style.height = H + "px";
