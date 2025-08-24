@@ -1,12 +1,50 @@
 # Chart specifications - declarative chart definitions
 charts:
+  # Main vergunningen charts for the report
+  - name: vergunningen-nieuwbouw
+    type: line_multi
+    params:
+      data_path: docs/assets/Embuild_vergunningen_story/graph_data_export.csv
+      x: Datum
+      ys: ["Nieuwbouw"]
+      title: ""  # No title - will be removed anyway
+    output: docs/assets/vergunningen-nieuwbouw/nieuwbouw.html
+    meta:
+      slug: vergunningen-nieuwbouw
+      alt: Vergunningsaanvragen voor nieuwbouw in Vlaanderen
+
+  - name: vergunningen-verbouwen
+    type: line_multi
+    params:
+      data_path: docs/assets/Embuild_vergunningen_story/graph_data_export.csv
+      x: Datum
+      ys: ["Verbouwen of hergebruik"]
+      title: ""  # No title - will be removed anyway
+    output: docs/assets/vergunningen-verbouwen/verbouwen.html
+    meta:
+      slug: vergunningen-verbouwen
+      alt: Vergunningsaanvragen voor verbouwen en hergebruik in Vlaanderen
+
+  - name: vergunningen-sloop
+    type: line_multi
+    params:
+      data_path: docs/assets/Embuild_vergunningen_story/graph_data_export.csv
+      x: Datum
+      ys: ["Sloop"]
+      title: ""  # No title - will be removed anyway
+    output: docs/assets/vergunningen-sloop/sloop.html
+    meta:
+      slug: vergunningen-sloop
+      alt: Vergunningsaanvragen voor sloop in Vlaanderen
+
+  # Legacy chart (keeping for reference)
   - name: vergunningen-trend
     type: line_multi
     params:
       data_path: docs/assets/Embuild_vergunningen_story/graph_data_export.csv
       x: Datum
       ys: ["Nieuwbouw", "Verbouwen of hergebruik", "Sloop"]
-      title: "Vergunningsaanvragen (niveau)"
+      title: ""  # No title - will be removed anyway
     output: docs/assets/Embuild_vergunningen_story/vergunningen-trend.html
     meta:
       slug: Embuild_vergunningen_story
