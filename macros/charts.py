@@ -58,6 +58,17 @@ def apply_theme_and_responsive(fig, theme: Theme):
         margin=dict(l=40, r=10, t=40, b=40),
         autosize=True
     )
+    
+    # Y starts at 0
+    fig.update_yaxes(range=[0, None], ticks="outside", zeroline=True, zerolinewidth=1)
+    
+    # X shows quarters
+    fig.update_xaxes(
+        dtick="M3",                 # one tick every 3 months
+        tickformat="%b %Y",         # shows Jan/Apr/Jul/Oct
+        ticks="outside"
+    )
+    
     return fig
 
 @chart("line_multi")

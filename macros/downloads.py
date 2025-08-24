@@ -1,10 +1,12 @@
 from urllib.parse import quote
 from datetime import date
 
-def _button(label, href):
-    return f'<a class="dl-btn" href="{href}" download>{label}</a>'
+def _button(label, href, download=False):
+    if download:
+        return f'<a class="dl-btn" href="{href}" download>{label}</a>'
+    return f'<a class="dl-btn" href="{href}" target="_blank" rel="noopener">{label}</a>'
 
-def _buttons_for_files(files):
+def _buttons_for_files(files, abs_url_fn=None):
     # files is a dict like {'csv': 'assets/foo/foo.csv', 'xlsx': 'assets/foo/foo.xlsx', 'html': 'assets/foo/chart.html', ...}
     order = ["html", "csv", "xlsx", "png", "svg"]
     labels = {"html":"HTML","csv":"CSV","xlsx":"XLSX","png":"PNG","svg":"SVG"}
@@ -12,7 +14,11 @@ def _buttons_for_files(files):
     for ext in order:
         if files and ext in files:
             href = files[ext]
-            parts.append(_button(labels[ext], href))
+            if abs_url_fn:
+                href = abs_url_fn(href)
+            # HTML opens in new tab, others download
+            download = (ext != "html")
+            parts.append(_button(labels[ext], href, download=download))
     return " ".join(parts)
 
 def render_download_buttons(asset):

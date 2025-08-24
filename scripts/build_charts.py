@@ -83,9 +83,11 @@ def write_html(fig, output_path: Path):
     
     # Update layout for natural height and proper margins
     fig.update_layout(
+        title=None,                        # <- hide inner chart title
         autosize=True,
         height=560,                        # <- natural starting height
-        margin=dict(l=60, r=24, t=56, b=96),
+        margin=dict(l=60, r=24, t=24, b=96),  # smaller top margin now that there's no title
+        legend=dict(orientation="h", x=0, y=1.05),
         xaxis=dict(automargin=True),
         yaxis=dict(automargin=True),
     )
