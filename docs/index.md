@@ -14,4 +14,4 @@ Author new reports locally in VS Code (Markdown or `.ipynb`), commit, and your s
 - One-click **downloads (CSV/XLSX/PNG/SVG)** for figures and tables
 - Easy **embeds** via `<iframe>` snippets
 
-👉 Start with the **[Developer Guide](guides/developer-guide.md)** or see a **[sample report](reports/sample-report.md)**.
+👉 Start with the **[Developer Guide](guides/developer-guide.md)** or see a **[sample report](reports/embuild-vergunningen-2025.md)**.
