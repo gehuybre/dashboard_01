@@ -1,6 +1,6 @@
 // Auto-height iframe system and embed snippet UX
 (function () {
-  function setH(el, h) { el.style.height = Math.max(300, Math.ceil(h)) + "px"; }
+  function setH(el, h) { el.style.height = Math.max(340, Math.ceil(h)) + "px"; }
   function onMessage(e) {
     var d = e.data || {};
     if (d.type !== "plotly-embed-size") return;
@@ -15,13 +15,12 @@
   }
 
   window.addEventListener("message", onMessage);
-
-  // Initial load
   document.addEventListener("DOMContentLoaded", ping);
+  window.addEventListener("resize", function(){ setTimeout(ping, 100); });
 
-  // Re-run after every SPA navigation in Material
+  // Re-run after every MkDocs Material SPA navigation
   if (window.document$ && typeof window.document$.subscribe === "function") {
-    window.document$.subscribe(function () { ping(); });
+    window.document$.subscribe(function () { setTimeout(ping, 60); });
   }
 })();
 

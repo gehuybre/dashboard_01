@@ -122,36 +122,49 @@ def embed_page_content_standalone(meta, site_url=""):
             relative_url = html_path
         return f"""
 <style>
-  html,body{{margin:0;padding:0;overflow:hidden;background:transparent}}
-  /* Fallback so it's never invisible even if JS fails */
-  .chart-html{{width:100%;border:0;min-height:560px}}
+  html,body {{ margin:0; padding:0; overflow:hidden; background:transparent; }}
+  .chart-html {{ width:100%; border:0; min-height:560px; display:block; }}
 </style>
-<iframe class="chart-html" src="{relative_url}" loading="eager"></iframe>
+<iframe class="chart-html" src="{relative_url}" loading="eager" referrerpolicy="no-referrer"></iframe>
 <script>
 (function(){{
   var child = document.querySelector(".chart-html");
-  function sendHeight() {{
+
+  function postHeight(h){{
+    var H = Math.max(340, Math.ceil(h) + 8);   // pad for modebar/ticks
+    child.style.height = H + "px";             // <-- make inner iframe tall enough
+    document.documentElement.style.height = H + "px";
+    document.body.style.height = H + "px";
+    try {{ parent && parent.postMessage({{ type:"plotly-embed-size", height:H, slug:"{slug}" }}, "*"); }} catch(e) {{}}
+  }}
+
+  function measure(){{
     try {{
       var doc = child.contentDocument || child.contentWindow.document;
-      var h = Math.max(
+      if (!doc) return;
+      var plot = doc.querySelector(".js-plotly-plot");
+      var h = plot ? plot.getBoundingClientRect().height : Math.max(
         doc.documentElement.scrollHeight || 0,
-        doc.body ? doc.body.scrollHeight : 0,
-        300
+        doc.body ? doc.body.scrollHeight : 0
       );
-      // 1) make the inner chart visible
-      child.style.height = h + "px";
-      // 2) size our own page (defensive)
-      document.documentElement.style.height = h + "px";
-      document.body.style.height = h + "px";
-      // 3) ask parent to resize the outer iframe (nice-to-have)
-      parent && parent.postMessage({{type:"plotly-embed-size", height:h, slug:"{slug}" }}, "*");
+      if (h) postHeight(h);
     }} catch(e) {{}}
   }}
-  child.addEventListener("load", function(){{ setTimeout(sendHeight, 60); }});
-  var ro = new ResizeObserver(sendHeight);
-  ro.observe(document.documentElement);
-  setInterval(sendHeight, 600);      // safety for late relayouts
-  window.addEventListener("message", function(e){{ if ((e.data||{{}}).type==="plotly-embed-ping") sendHeight(); }});
+
+  child.addEventListener("load", function(){{
+    setTimeout(measure, 80);                   // after plot renders
+    try {{
+      var doc = child.contentDocument || child.contentWindow.document;
+      var plot = doc && doc.querySelector(".js-plotly-plot");
+      if (plot && child.contentWindow && child.contentWindow.ResizeObserver) {{
+        new child.contentWindow.ResizeObserver(measure).observe(plot);
+      }}
+    }} catch(e) {{}}
+  }});
+  setInterval(measure, 800);                   // safety for late re-layouts
+  window.addEventListener("message", function(e) {{
+    if ((e.data||{{}}).type === "plotly-embed-ping") measure();
+  }});
 }})();
 </script>
 """

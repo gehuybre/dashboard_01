@@ -81,30 +81,23 @@ def write_html(fig, output_path: Path):
     """Write a Plotly figure to HTML file"""
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
+    # Update layout for natural height and proper margins
+    fig.update_layout(
+        autosize=True,
+        height=560,                        # <- natural starting height
+        margin=dict(l=60, r=24, t=56, b=96),
+        xaxis=dict(automargin=True),
+        yaxis=dict(automargin=True),
+    )
+    
     # Write HTML with CDN-hosted Plotly.js for smaller file sizes
     pio.write_html(
         fig, 
         file=str(output_path), 
         full_html=True, 
         include_plotlyjs="cdn",
-        config={
-            'displayModeBar': True,
-            'displaylogo': False,
-            'responsive': True,
-            'modeBarButtonsToRemove': [
-                'pan2d', 'lasso2d', 'select2d', 'autoScale2d',
-                'hoverClosestCartesian', 'hoverCompareCartesian'
-            ],
-            'toImageButtonOptions': {
-                'format': 'png',
-                'filename': 'chart',
-                'height': 600,
-                'width': 1000,
-                'scale': 2
-            }
-        },
-        default_width="100%",   # container width
-        default_height="100%",  # height controlled by auto-height script
+        config={"responsive": True, "displaylogo": False},
+        # do NOT set default_height="100%"
     )
 
 def build_all():

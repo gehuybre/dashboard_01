@@ -31,6 +31,15 @@ def main():
             # Build the chart using the registry
             fig = build(chart_spec["type"], **chart_spec["params"])
             
+            # Update layout for natural height and proper margins
+            fig.update_layout(
+                autosize=True,
+                height=560,                        # <- natural starting height
+                margin=dict(l=60, r=24, t=56, b=96),
+                xaxis=dict(automargin=True),
+                yaxis=dict(automargin=True),
+            )
+            
             # Write to output path
             out = Path(chart_spec["output"])
             out.parent.mkdir(parents=True, exist_ok=True)
@@ -39,14 +48,8 @@ def main():
                 file=out, 
                 full_html=True, 
                 include_plotlyjs='cdn',
-                config={
-                    'displayModeBar': True,
-                    'displaylogo': False,
-                    'responsive': True,
-                    'modeBarButtonsToRemove': [
-                        'pan2d', 'lasso2d', 'select2d', 'autoScale2d'
-                    ]
-                }
+                config={"responsive": True, "displaylogo": False},
+                # do NOT set default_height="100%"
             )
             
             print("Wrote", out)
