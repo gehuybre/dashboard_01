@@ -1,7 +1,7 @@
 report:
   slug: vergunningen-2025
-  data: assets/Embuild_vergunningen_story/graph_data_export.csv  # Clean dataset with moving averages
-  output_dir: assets/reports/vergunningen-2025/charts
+  data: assets/reports/vergunningen-2025/data/graph_data_clean.csv  # Clean location
+  output_dir: assets/reports/vergunningen-2025/charts  # Organized output
   defaults:
     title: null                   # never draw a chart title inside the figure
     color_alias:                  # map semantic roles to brand colors

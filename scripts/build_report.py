@@ -67,9 +67,13 @@ def build_report(config_path: str):
         # Build the chart
         fig = build(spec["type"], df=df, site=site, spec=spec, defaults=defaults)
         
-        # Save HTML to asset-slug-based directory (for validation compatibility)
-        asset_slug = f'{conf["report"]["slug"]}-{chart_id}'
-        asset_html_path = abs_out(f'assets/{asset_slug}/{chart_id}.html')
+        # Clean structure: assets/reports/{slug}/charts/{chart-id}/
+        report_slug = conf["report"]["slug"]
+        chart_asset_dir = abs_out(f'assets/reports/{report_slug}/charts/{chart_id}')
+        chart_asset_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Save HTML in clean structure
+        asset_html_path = chart_asset_dir / f'{chart_id}.html'
         pio.write_html(
             fig, 
             file=str(asset_html_path), 
@@ -78,17 +82,18 @@ def build_report(config_path: str):
             config={"responsive": True, "displaylogo": False}
         )
         
-        # Also save to the reports structure for organization
-        reports_html_path = abs_out(f'{conf["report"]["output_dir"]}/{chart_id}.html')
+        # Also maintain legacy compatibility path for existing macros
+        asset_slug = f'{conf["report"]["slug"]}-{chart_id}'
+        legacy_path = abs_out(f'assets/{asset_slug}/{chart_id}.html')
         pio.write_html(
             fig, 
-            file=str(reports_html_path), 
+            file=str(legacy_path), 
             full_html=True, 
             include_plotlyjs="cdn",
             config={"responsive": True, "displaylogo": False}
         )
         
-        # Create asset.yml for this chart
+        # Create asset.yml for this chart in the clean structure
         asset = {
             "slug": f'{conf["report"]["slug"]}-{chart_id}',
             "title": spec.get("title", chart_id.replace("-", " ").title()),
@@ -101,14 +106,20 @@ def build_report(config_path: str):
             }
         }
         
-        # Save asset.yml
-        asset_dir = abs_out(f'assets/{asset_slug}')
-        asset_dir.mkdir(parents=True, exist_ok=True)
-        asset_path = asset_dir / "asset.yml"
+        # Save asset.yml in clean structure
+        asset_path = chart_asset_dir / "asset.yml"
         asset_path.write_text(yaml.safe_dump(asset), encoding="utf-8")
         
+        # Also save legacy asset.yml for compatibility
+        legacy_asset_dir = abs_out(f'assets/{asset_slug}')
+        legacy_asset_dir.mkdir(parents=True, exist_ok=True)
+        legacy_asset_path = legacy_asset_dir / "asset.yml"
+        legacy_asset = asset.copy()
+        legacy_asset["files"]["html"] = str(legacy_path).replace("docs/", "")
+        legacy_asset_path.write_text(yaml.safe_dump(legacy_asset), encoding="utf-8")
+        
         print(f"    ✅ {asset_html_path}")
-        print(f"    ✅ {reports_html_path}")
+        print(f"    ✅ {legacy_path} (legacy)")
         print(f"    ✅ {asset_path}")
     
     print(f"🎉 Report '{conf['report']['slug']}' built successfully!")

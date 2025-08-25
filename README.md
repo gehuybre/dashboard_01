@@ -132,6 +132,54 @@ summary: One-line summary.
 
 - **Notebook**: drop `your-report.ipynb` into `docs/reports/`. It's rendered by the `mkdocs-jupyter` plugin.
 
+## Asset Organization
+
+### Clean Structure (Recommended)
+
+The new per-report system organizes assets in a clean, scalable structure:
+
+```
+docs/assets/
+  reports/                              # 📊 Per-report organization
+    vergunningen-2025/
+      data/
+        graph_data_clean.csv            # 📈 Report-specific dataset
+      charts/
+        nieuwbouw/
+          asset.yml                     # 📦 Chart metadata
+          nieuwbouw.html               # 🎨 Interactive chart
+        verbouwen/
+          asset.yml
+          verbouwen.html
+    
+    sales-analysis-2024/                # 🔮 Future reports
+      data/
+        sales_data.csv
+      charts/
+        overview/
+        trends/
+  
+  legacy/                               # 🗂️ Backward compatibility
+    vergunningen-nieuwbouw/             # Individual chart assets (old way)
+    Embuild_vergunningen_story/         # Raw data (old location)
+```
+
+**Benefits:**
+- ✅ **Report isolation**: Each report owns its namespace
+- ✅ **Predictable paths**: `assets/reports/{slug}/charts/{chart-id}/`
+- ✅ **Data co-location**: Dataset lives with its charts
+- ✅ **Easy cleanup**: Remove entire report folder when obsolete
+- ✅ **Scalable**: No naming conflicts as you add reports
+
+### Migration Tool
+
+Organize existing assets with the migration script:
+
+```bash
+# Review current structure and migrate legacy assets
+uv run python scripts/organize_assets.py
+```
+
 ## Attach charts/tables/assets
 
 1. Put downloadable files under `docs/assets/<slug>/` (e.g. PNG, SVG, CSV, XLSX, HTML charts).

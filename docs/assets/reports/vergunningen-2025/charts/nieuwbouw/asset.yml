@@ -1,6 +1,6 @@
 files:
   csv: assets/reports/vergunningen-2025/data/graph_data_clean.csv
-  html: assets/vergunningen-2025-nieuwbouw/nieuwbouw.html
+  html: assets/reports/vergunningen-2025/charts/nieuwbouw/nieuwbouw.html
 slug: vergunningen-2025-nieuwbouw
 summary: Interactieve grafiek van vergunningsaanvragen voor nieuwbouw in Vlaanderen
 tags:
