@@ -18,6 +18,28 @@ for yml in ASSET_YMLS:
     summary = meta.get("summary", "")
     tags = meta.get("tags", [])
     files = meta.get("files", {})
+    
+    # Organize generated pages by putting them in subdirectories
+    # Legacy assets go in assets/legacy/pages/
+    # New per-report assets go in assets/reports/pages/
+    if "legacy/" in yml:
+        page_prefix = "assets/legacy/pages"
+    elif "/reports/" in yml:
+        # Extract report slug from path like: docs/assets/reports/vergunningen-2025/charts/nieuwbouw/
+        path_parts = yml.split("/")
+        if "reports" in path_parts:
+            report_idx = path_parts.index("reports")
+            if len(path_parts) > report_idx + 1:
+                report_slug = path_parts[report_idx + 1]
+                page_prefix = f"assets/reports/{report_slug}/pages"
+            else:
+                page_prefix = "assets/reports/pages"
+        else:
+            page_prefix = "assets/reports/pages"
+    else:
+        # Other assets go in assets/pages/
+        page_prefix = "assets/pages"
+    
     # Detail page
     detail_md = f"""---
 title: {title}
@@ -28,9 +50,9 @@ tags: {tags}
 
 {{{{ asset_page_content({meta}) }}}}
 """
-    write(f"assets/{slug}.md", detail_md)
+    write(f"{page_prefix}/{slug}.md", detail_md)
 
-    # Minimal embed page
+    # Minimal embed page  
     embed_md = f"""---
 title: {title} (Embed)
 embed: true
@@ -43,4 +65,4 @@ hide:
 {{{{ embed_page_content({meta}) }}}}
 </div>
 """
-    write(f"assets/{slug}-embed.md", embed_md)
+    write(f"{page_prefix}/{slug}-embed.md", embed_md)

@@ -1,0 +1,11 @@
+---
+title: Vergunningsaanvragen voor sloop (Embed)
+embed: true
+hide:
+  - navigation
+  - toc
+---
+
+<div data-embed="true">
+{{ embed_page_content({'slug': 'vergunningen-sloop', 'title': 'Vergunningsaanvragen voor sloop', 'summary': 'Interactieve grafiek – vergunningsaanvragen voor sloop in Vlaanderen.', 'tags': ['vergunningen', 'Vlaanderen', 2025], 'type': 'interactive', 'files': {'html': 'assets/legacy/vergunningen-sloop/sloop.html', 'csv': 'assets/legacy/Embuild_vergunningen_story/graph_data_export.csv'}}) }}
+</div>

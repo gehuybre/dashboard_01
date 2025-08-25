@@ -4,5 +4,5 @@ summary: Interactieve grafiek – vergunningsaanvragen voor verbouwen en hergebr
 tags: [vergunningen, Vlaanderen, 2025]
 type: interactive
 files:
-  html: assets/vergunningen-verbouwen/verbouwen.html
-  csv: assets/Embuild_vergunningen_story/graph_data_export.csv
+  html: assets/legacy/vergunningen-verbouwen/verbouwen.html
+  csv: assets/legacy/Embuild_vergunningen_story/graph_data_export.csv
