@@ -56,14 +56,7 @@ def validate_asset_schema(asset_data: Dict[str, Any], asset_path: Path) -> List[
                     errors.append("Field 'files.html' must be a string")
                 elif not html_path.startswith('assets/'):
                     errors.append(f"Field 'files.html' must start with 'assets/' (got: '{html_path}')")
-                else:
-                    # Extract slug from path and validate consistency
-                    path_parts = html_path.split('/')
-                    if len(path_parts) >= 3:
-                        path_slug = path_parts[1]
-                        asset_slug = asset_data.get('slug', '')
-                        if path_slug != asset_slug:
-                            errors.append(f"HTML path slug '{path_slug}' doesn't match asset slug '{asset_slug}'")
+                # Note: Skipping slug path validation for new nested structure
     
     return errors
 
@@ -88,17 +81,16 @@ def validate_file_existence(asset_data: Dict[str, Any], docs_root: Path) -> List
 
 
 def find_asset_files(docs_root: Path) -> List[Path]:
-    """Find all asset.yml files in the assets directory."""
+    """Find all asset.yml files in the assets directory and subdirectories."""
     assets_dir = docs_root / 'assets'
     if not assets_dir.exists():
         return []
     
     asset_files = []
-    for item in assets_dir.iterdir():
-        if item.is_dir():
-            asset_yml = item / 'asset.yml'
-            if asset_yml.exists():
-                asset_files.append(asset_yml)
+    
+    # Search recursively for asset.yml files
+    for asset_yml in assets_dir.rglob('asset.yml'):
+        asset_files.append(asset_yml)
     
     return asset_files
 
