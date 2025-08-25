@@ -5,6 +5,7 @@ from pathlib import Path
 import yaml
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 
 # Global registry for chart types
 _REGISTRY: Dict[str, Callable] = {}
@@ -46,6 +47,28 @@ def load_theme() -> Theme:
         font=charts_config["font_family"],
         title_size=charts_config["title_size"]
     )
+
+def load_site_config():
+    """Load full site configuration"""
+    site_path = Path("docs/_data/site.yml")
+    if site_path.exists():
+        return yaml.safe_load(site_path.read_text())
+    return {}
+
+def color_from_alias(alias: str, site: dict) -> str:
+    """Resolve color alias to actual color value"""
+    if not isinstance(alias, str):
+        return alias  # Already a color value
+    
+    colors = site.get("charts", {}).get("colors", {})
+    color_map = {
+        "primary": colors.get("primary", "#005EB8"),
+        "secondary": colors.get("secondary", "#00A3E0"), 
+        "accent": colors.get("accent", "#FFC300"),
+        "neutral": colors.get("neutral", "#5F6A6A"),
+        "gray": colors.get("gray", "#D5D8DC")
+    }
+    return color_map.get(alias, alias)
 
 def apply_theme_and_responsive(fig, theme: Theme):
     """Apply theme and responsive settings to a figure"""
@@ -131,6 +154,71 @@ def area_filled(data_path, x, y, color=None, title=""):
     
     # Apply theme and responsive settings
     apply_theme_and_responsive(fig, theme)
+    
+    return fig
+
+@chart("line_pair")
+def line_pair(df: pd.DataFrame, site: dict, spec: dict, defaults: dict):
+    """Line chart with monthly data + trend line (dashed + solid)"""
+    # Resolve color
+    color = spec.get("color", "primary")
+    if color in ("primary", "secondary", "accent", "neutral", "gray"):
+        color = color_from_alias(color, site)
+
+    x = spec["x"]
+    monthly_series = next(s for s in spec["series"] if s["role"] == "monthly")
+    trend_series = next(s for s in spec["series"] if s["role"] == "trend")
+    
+    monthly_col = monthly_series["column"]
+    trend_col = trend_series["column"]
+
+    fig = go.Figure([
+        go.Scatter(
+            x=df[x], y=df[monthly_col], 
+            mode="lines",
+            name="Maandelijks niveau", 
+            line=dict(color=color, width=2, dash="dash")
+        ),
+        go.Scatter(
+            x=df[x], y=df[trend_col], 
+            mode="lines",
+            name="1-jarig voortschrijdend gemiddelde", 
+            line=dict(color=color, width=3)
+        ),
+    ])
+
+    # Merge defaults for axes/legend
+    y_cfg = defaults.get("yaxis", {})
+    fig.update_yaxes(
+        range=y_cfg.get("range", [0, None]), 
+        automargin=True, 
+        ticks="outside",
+        zeroline=True,
+        zerolinewidth=1
+    )
+
+    x_cfg = spec.get("xaxis", {})
+    fig.update_xaxes(
+        dtick=x_cfg.get("dtick", "M3"),
+        tickformat=x_cfg.get("tickformat", "%b %Y"),
+        automargin=True, 
+        ticks="outside"
+    )
+
+    legend_cfg = defaults.get("legend", {})
+    fig.update_layout(
+        template=site.get("charts", {}).get("template", "simple_white"),
+        font=dict(family=site.get("charts", {}).get("font_family", "Inter, sans-serif")),
+        height=560,
+        margin=dict(l=60, r=24, t=24, b=96),
+        legend=dict(
+            orientation=legend_cfg.get("orientation", "h"),
+            x=0, 
+            y=legend_cfg.get("y", 1.05)
+        ),
+        title=None,
+        autosize=True
+    )
     
     return fig
 

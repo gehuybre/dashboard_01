@@ -1,0 +1,58 @@
+report:
+  slug: vergunningen-2025
+  data: assets/Embuild_vergunningen_story/graph_data_export.csv  # Clean dataset with moving averages
+  output_dir: assets/reports/vergunningen-2025/charts
+  defaults:
+    title: null                   # never draw a chart title inside the figure
+    color_alias:                  # map semantic roles to brand colors
+      nieuwbouw: primary
+      verbouwen: secondary
+      sloop: accent
+    yaxis:
+      range: [0, null]
+    legend:
+      orientation: h
+      y: 1.05
+
+charts:
+  - id: nieuwbouw
+    type: line_pair               # chart class in charts.py
+    x: Datum
+    series:
+      - column: Nieuwbouw
+        role: monthly             # dashed
+      - column: Nieuwbouw (voortschrijdend gemiddelde)
+        role: trend               # solid
+    color: primary                # uses site palette
+    xaxis:
+      dtick: "M3"
+      tickformat: "%b %Y"
+    title: "Vergunningsaanvragen Nieuwbouw"
+    summary: "Interactieve grafiek van vergunningsaanvragen voor nieuwbouw in Vlaanderen"
+    tags: ["vergunningen", "nieuwbouw", "Vlaanderen", "2025"]
+
+  - id: verbouwen
+    type: line_pair
+    x: Datum
+    series:
+      - column: Verbouwen of hergebruik
+        role: monthly
+      - column: Verbouwen of hergebruik (voortschrijdend gemiddelde)
+        role: trend
+    color: secondary
+    title: "Vergunningsaanvragen Verbouwen"
+    summary: "Interactieve grafiek van vergunningsaanvragen voor verbouwen en hergebruik in Vlaanderen"
+    tags: ["vergunningen", "verbouwen", "hergebruik", "Vlaanderen", "2025"]
+
+  - id: sloop
+    type: line_pair
+    x: Datum
+    series:
+      - column: Sloop
+        role: monthly
+      - column: Sloop (voortschrijdend gemiddelde)
+        role: trend
+    color: accent
+    title: "Vergunningsaanvragen Sloop"
+    summary: "Interactieve grafiek van vergunningsaanvragen voor sloop in Vlaanderen"
+    tags: ["vergunningen", "sloop", "Vlaanderen", "2025"]

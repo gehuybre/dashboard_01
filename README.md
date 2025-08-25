@@ -29,17 +29,66 @@ uv run mkdocs serve
 
 ## Interactive Charts
 
-This site includes a powerful chart generation system:
+This site includes a powerful chart generation system with two approaches:
 
+### Legacy Global Charts (charts.yml)
 ```bash
-# Build all charts from YAML specifications
+# Build all charts from global YAML specifications
 uv run python scripts/build_charts.py
 
 # Or use the simple builder
 uv run python scripts/build_charts_simple.py
 ```
 
-### Add a new chart
+### New Per-Report Configuration (Recommended)
+```bash
+# Build one report from its config
+uv run python scripts/build_report.py docs/reports/vergunningen-2025/config.yml
+
+# Build all reports
+uv run python scripts/build_all_reports.py
+
+# Validate report configuration
+uv run python scripts/validate_report.py docs/reports/vergunningen-2025/config.yml
+```
+
+### Add a new report (Per-Report Method)
+
+1. **Create report directory**: `docs/reports/your-report/`
+
+2. **Create config.yml**:
+```yaml
+report:
+  slug: your-report
+  data: assets/your-data/clean_dataset.csv
+  output_dir: assets/reports/your-report/charts
+  defaults:
+    title: null  # No titles inside charts
+    yaxis:
+      range: [0, null]  # Y-axis starts at 0
+    legend:
+      orientation: h
+      y: 1.05
+
+charts:
+  - id: chart-name
+    type: line_pair  # or line_multi, bar_grouped, etc.
+    x: date_column
+    series:
+      - column: monthly_data
+        role: monthly
+      - column: moving_average
+        role: trend
+    color: primary  # Uses site palette
+    title: "Chart Title"
+    summary: "Chart description"
+```
+
+3. **Build**: `uv run python scripts/build_report.py docs/reports/your-report/config.yml`
+
+Available chart types: `line_pair`, `line_multi`, `bar_grouped`, `scatter_trend`, `area_filled`
+
+### Add a chart (Legacy Global Method)
 
 1. **Define the chart** in `docs/_data/charts.yml`:
 
@@ -183,8 +232,14 @@ uv lock --upgrade
 
 ### Build Order (Important!)
 
-For reliable builds, always follow this order:
+For reliable builds, choose one approach:
 
+**Per-Report Method (Recommended)**:
+1. **Validate**: `uv run python scripts/validate_report.py docs/reports/<slug>/config.yml`
+2. **Build charts**: `uv run python scripts/build_report.py docs/reports/<slug>/config.yml`
+3. **Build site**: `uv run mkdocs build --strict`
+
+**Legacy Global Method**:
 1. **Validate assets**: `uv run python scripts/validate_assets.py`
 2. **Build charts**: `uv run python scripts/build_charts.py` 
 3. **Build site**: `uv run mkdocs build --strict`

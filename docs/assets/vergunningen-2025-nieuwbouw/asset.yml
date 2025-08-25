@@ -1,0 +1,12 @@
+files:
+  csv: assets/Embuild_vergunningen_story/graph_data_export.csv
+  html: assets/reports/vergunningen-2025/charts/nieuwbouw.html
+slug: vergunningen-2025-nieuwbouw
+summary: Interactieve grafiek van vergunningsaanvragen voor nieuwbouw in Vlaanderen
+tags:
+- vergunningen
+- nieuwbouw
+- Vlaanderen
+- '2025'
+title: Vergunningsaanvragen Nieuwbouw
+type: interactive
