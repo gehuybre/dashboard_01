@@ -1,6 +1,6 @@
 files:
   csv: assets/Embuild_vergunningen_story/graph_data_export.csv
-  html: assets/reports/vergunningen-2025/charts/sloop.html
+  html: assets/vergunningen-2025-sloop/sloop.html
 slug: vergunningen-2025-sloop
 summary: Interactieve grafiek van vergunningsaanvragen voor sloop in Vlaanderen
 tags:

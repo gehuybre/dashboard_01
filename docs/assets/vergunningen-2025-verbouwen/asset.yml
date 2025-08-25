@@ -1,6 +1,6 @@
 files:
   csv: assets/Embuild_vergunningen_story/graph_data_export.csv
-  html: assets/reports/vergunningen-2025/charts/verbouwen.html
+  html: assets/vergunningen-2025-verbouwen/verbouwen.html
 slug: vergunningen-2025-verbouwen
 summary: Interactieve grafiek van vergunningsaanvragen voor verbouwen en hergebruik
   in Vlaanderen

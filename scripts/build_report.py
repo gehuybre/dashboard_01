@@ -67,11 +67,22 @@ def build_report(config_path: str):
         # Build the chart
         fig = build(spec["type"], df=df, site=site, spec=spec, defaults=defaults)
         
-        # Save HTML
-        output_path = abs_out(f'{conf["report"]["output_dir"]}/{chart_id}.html')
+        # Save HTML to asset-slug-based directory (for validation compatibility)
+        asset_slug = f'{conf["report"]["slug"]}-{chart_id}'
+        asset_html_path = abs_out(f'assets/{asset_slug}/{chart_id}.html')
         pio.write_html(
             fig, 
-            file=str(output_path), 
+            file=str(asset_html_path), 
+            full_html=True, 
+            include_plotlyjs="cdn",
+            config={"responsive": True, "displaylogo": False}
+        )
+        
+        # Also save to the reports structure for organization
+        reports_html_path = abs_out(f'{conf["report"]["output_dir"]}/{chart_id}.html')
+        pio.write_html(
+            fig, 
+            file=str(reports_html_path), 
             full_html=True, 
             include_plotlyjs="cdn",
             config={"responsive": True, "displaylogo": False}
@@ -85,18 +96,19 @@ def build_report(config_path: str):
             "tags": spec.get("tags", ["vergunningen", "Vlaanderen", "2025"]),
             "type": "interactive",
             "files": {
-                "html": str(output_path).replace("docs/", ""),
+                "html": str(asset_html_path).replace("docs/", ""),
                 "csv": conf["report"]["data"]
             }
         }
         
         # Save asset.yml
-        asset_dir = abs_out(f'assets/{conf["report"]["slug"]}-{chart_id}')
+        asset_dir = abs_out(f'assets/{asset_slug}')
         asset_dir.mkdir(parents=True, exist_ok=True)
         asset_path = asset_dir / "asset.yml"
         asset_path.write_text(yaml.safe_dump(asset), encoding="utf-8")
         
-        print(f"    ✅ {output_path}")
+        print(f"    ✅ {asset_html_path}")
+        print(f"    ✅ {reports_html_path}")
         print(f"    ✅ {asset_path}")
     
     print(f"🎉 Report '{conf['report']['slug']}' built successfully!")
