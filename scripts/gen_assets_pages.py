@@ -21,12 +21,9 @@ for yml in ASSET_YMLS:
     
     # Organize generated pages by putting them in subdirectories
     # Legacy assets go in assets/legacy/pages/
-    # New per-report assets with the new slug format go directly in assets/
+    # Assets in /reports/ directory always go in their nested structure  
     if "legacy/" in yml:
         page_prefix = "assets/legacy/pages"
-    elif "/reports/" in yml and slug and slug.startswith("reports-"):
-        # New assets with properly formatted slugs go directly in assets/
-        page_prefix = "assets"
     elif "/reports/" in yml:
         # Extract report slug from path like: docs/assets/reports/vergunningen-2025/charts/nieuwbouw/
         path_parts = yml.split("/")

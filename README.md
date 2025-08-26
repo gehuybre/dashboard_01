@@ -146,13 +146,13 @@ docs/assets/
         graph_data_clean.csv            # 📈 Report-specific dataset
       charts/
         nieuwbouw/
-          asset.yml                     # 📦 Chart metadata (slug: reports-vergunningen-2025-charts-nieuwbouw)
+          asset.yml                     # 📦 Chart metadata (slug: vergunningen-2025-charts-nieuwbouw)
           nieuwbouw.html               # 🎨 Interactive chart
         verbouwen/
-          asset.yml                     # 📦 Chart metadata (slug: reports-vergunningen-2025-charts-verbouwen)
+          asset.yml                     # 📦 Chart metadata (slug: vergunningen-2025-charts-verbouwen)
           verbouwen.html               # 🎨 Interactive chart
         sloop/
-          asset.yml                     # 📦 Chart metadata (slug: reports-vergunningen-2025-charts-sloop)
+          asset.yml                     # 📦 Chart metadata (slug: vergunningen-2025-charts-sloop)
           sloop.html                   # 🎨 Interactive chart
     
     sales-analysis-2024/                # 🔮 Future reports
@@ -229,7 +229,7 @@ uv run python scripts/organize_assets.py
 **Example:**
 ```jinja
 {{ render_download_buttons({
-  "slug": "reports-vergunningen-2025-charts-nieuwbouw",
+  "slug": "vergunningen-2025-charts-nieuwbouw",
   "title": "Data & grafiek – Nieuwbouw", 
   "type": "interactive",
   "files": { 
@@ -241,7 +241,7 @@ uv run python scripts/organize_assets.py
 
 **For embed iframes:**
 ```jinja
-{{ embed_iframe("reports-vergunningen-2025-charts-nieuwbouw") }}
+{{ embed_iframe("vergunningen-2025-charts-nieuwbouw") }}
 ```
 
 **For embed snippets:**
@@ -291,7 +291,7 @@ type: "interactive"           # Type: figure, table, dataset, interactive
 **Example for nested assets:**
 ```yaml
 # For: docs/assets/reports/vergunningen-2025/charts/nieuwbouw/asset.yml
-slug: reports-vergunningen-2025-charts-nieuwbouw
+slug: vergunningen-2025-charts-nieuwbouw
 title: "Vergunningsaanvragen Nieuwbouw"
 files:
   csv: assets/reports/vergunningen-2025/data/graph_data_clean.csv

@@ -21,13 +21,13 @@ De gestage daling bij **nieuwbouw** zet door tot een historisch laag niveau. Waa
 De grafieken tonen telkens zowel het **niveau per kwartaal** (gestippeld) als het **1‑jarig voortschrijdend gemiddelde** (volledige lijn) om seizoenseffecten uit te vlakken.
 
 ### Vergunningsaanvragen voor nieuwbouw
-{{ embed_iframe("reports-vergunningen-2025-charts-nieuwbouw") }}
+{{ embed_iframe("vergunningen-2025-charts-nieuwbouw") }}
 
 ### Vergunningsaanvragen voor verbouwen en hergebruik
-{{ embed_iframe("reports-vergunningen-2025-charts-verbouwen") }}
+{{ embed_iframe("vergunningen-2025-charts-verbouwen") }}
 
 ### Vergunningsaanvragen voor sloop
-{{ embed_iframe("reports-vergunningen-2025-charts-sloop") }}
+{{ embed_iframe("vergunningen-2025-charts-sloop") }}
 
 ## Kickstart voor woon- en vergunningenbeleid
 Tegen **2040** stijgt het aantal huishoudens van **3,0** naar **3,3 miljoen**. Het aanbod blijft achter. Projectontwikkelaars en particuliere bouwheren dienen minder projecten in en lopen vast in **lange procedures** en **strenger wordende regels**. Embuild Vlaanderen schuift 5 voorstellen naar voren:
@@ -45,7 +45,7 @@ Tegen **2040** stijgt het aantal huishoudens van **3,0** naar **3,3 miljoen**. H
 
 ## Downloads
 {{ render_download_buttons({
-  "slug": "reports-vergunningen-2025-charts-nieuwbouw",
+  "slug": "vergunningen-2025-charts-nieuwbouw",
   "title": "Data & grafiek – Nieuwbouw",
   "type": "figure",
   "files": {
@@ -55,7 +55,7 @@ Tegen **2040** stijgt het aantal huishoudens van **3,0** naar **3,3 miljoen**. H
 }) }}
 
 {{ render_download_buttons({
-  "slug": "reports-vergunningen-2025-charts-verbouwen",
+  "slug": "vergunningen-2025-charts-verbouwen",
   "title": "Data & grafiek – Verbouwen/hergebruik",
   "type": "figure",
   "files": {
@@ -65,7 +65,7 @@ Tegen **2040** stijgt het aantal huishoudens van **3,0** naar **3,3 miljoen**. H
 }) }}
 
 {{ render_download_buttons({
-  "slug": "reports-vergunningen-2025-charts-sloop",
+  "slug": "vergunningen-2025-charts-sloop",
   "title": "Data & grafiek – Sloop",
   "type": "figure",
   "files": {

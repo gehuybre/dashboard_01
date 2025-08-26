@@ -1,7 +1,7 @@
 files:
   csv: assets/reports/vergunningen-2025/data/graph_data_clean.csv
   html: assets/reports/vergunningen-2025/charts/verbouwen/verbouwen.html
-slug: reports-vergunningen-2025-charts-verbouwen
+slug: vergunningen-2025-charts-verbouwen
 summary: Interactieve grafiek van vergunningsaanvragen voor verbouwen en hergebruik
   in Vlaanderen
 tags:
