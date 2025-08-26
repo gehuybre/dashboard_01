@@ -1,0 +1,14 @@
+.embed-ui {
+  border: 1px solid #e3e6e8; border-radius: 8px; padding: 12px; margin: 8px 0 16px;
+  background: #fafbfc;
+}
+.embed-ui .label-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.embed-ui .label-row .link { margin-left:auto; font-size:.9em; }
+.embed-ui .code-row { display:flex; gap:8px; }
+.embed-ui .embed-code {
+  width:100%; height:64px; resize:vertical; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+.embed-ui .embed-copy { white-space:nowrap; padding:8px 12px; }
+.embed-ui details { margin-top:6px; }
+.embed-ui details .opts { display:flex; gap:12px; margin-top:8px; }
+.embed-ui details .opts label { font-size:.9em; display:flex; gap:6px; align-items:center; }

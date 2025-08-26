@@ -21,8 +21,10 @@ theme:
 
 extra_css:
   - static/css/site.css
+  - static/css/embed-ui.css
 extra_javascript:
   - static/js/embed.js
+  - static/js/embed-ui.js
 
 plugins:
   - search

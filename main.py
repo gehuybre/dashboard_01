@@ -38,31 +38,51 @@ def define_env(env):
                 f'loading="lazy" style="border:0;" data-embed-autoheight data-embed-slug="{slug}"></iframe>')
     
     def _render_download_buttons(spec):
-        """Render download buttons with absolute URLs and embed code"""
+        """Render download buttons with absolute URLs and Flourish-style embed UI"""
         files = spec.get("files", {})
-        parts = []
+        slug  = spec.get("slug", "")
+        download_parts = []
         
         # HTML (open in new tab, not download)
         if "html" in files:
-            parts.append(f'<a class="dl-btn" href="{abs_url(files["html"])}" target="_blank" rel="noopener">HTML</a>')
+            download_parts.append(f'<a class="dl-btn" href="{abs_url(files["html"])}" target="_blank" rel="noopener">HTML</a>')
         
-        # CSV/XLSX (download)
-        for k, label in (("csv","CSV"), ("xlsx","XLSX")):
+        # CSV/XLSX/PNG/SVG (download)
+        for k, label in (("csv","CSV"), ("xlsx","XLSX"), ("png","PNG"), ("svg","SVG")):
             if k in files:
-                parts.append(f'<a class="dl-btn" href="{abs_url(files[k])}" download>{label}</a>')
+                download_parts.append(f'<a class="dl-btn" href="{abs_url(files[k])}" download>{label}</a>')
         
-        # NEW: "download iframe code" as a small HTML file
-        slug = spec.get("slug")
+        # -- Embed UI (Flourish style) - separate section ----------------------------------------
+        embed_ui = ""
         if slug:
-            iframe_code = f'<iframe src="{abs_url(f"assets/{slug}-embed/")}" width="800" height="480" loading="lazy" title="{slug}" style="border:0;"></iframe>'
-            data_href = "data:text/html;charset=utf-8," + iframe_code.replace('"',"&quot;")
-            parts.append(f'<a class="dl-btn" href="{data_href}" download="embed-{slug}.html">Embed&nbsp;code</a>')
+            src = abs_url(f"assets/{slug}-embed/")
+            embed_ui = f"""
+<div class="embed-ui" data-embed-slug="{slug}" data-embed-src="{src}">
+  <div class="label-row">
+    <strong>Embed on your website</strong>
+    <a class="link" href="{src}" target="_blank" rel="noopener">Open embed</a>
+  </div>
+  <div class="code-row">
+    <textarea class="embed-code" readonly></textarea>
+    <button type="button" class="embed-copy">Copy</button>
+  </div>
+  <details>
+    <summary>More options</summary>
+    <div class="opts">
+      <label>Width <input class="embed-width" type="number" value="800" min="200" step="10"></label>
+      <label>Height <input class="embed-height" type="number" value="480" min="200" step="10"></label>
+      <label><input class="embed-border" type="checkbox" checked> No border</label>
+    </div>
+  </details>
+</div>
+"""
         
         title = spec.get('title', spec.get('slug','Asset'))
         return f'''
 <div class="download-box">
   <div class="download-title">{title}</div>
-  <div class="download-buttons">{" ".join(parts)}</div>
+  <div class="download-buttons">{" ".join(download_parts)}</div>
+  {embed_ui}
 </div>
 '''.strip()
     
