@@ -198,6 +198,61 @@ def line_pair(data_path, x, series, color="primary", title="", **kwargs):
 
     return fig
 
+@chart("line_dual_data")
+def line_dual_data(yearly_data_path, monthly_data_path, x_yearly, x_monthly, y_yearly, y_monthly, color="primary", title="", yearly_name="Yearly trend", monthly_name="Monthly data", **kwargs):
+    """Line chart with data from two sources - yearly (solid) and monthly (dashed)"""
+    theme = load_theme()
+    
+    # Load both datasets
+    df_yearly = pd.read_csv(yearly_data_path)
+    df_monthly = pd.read_csv(monthly_data_path)
+    
+    # Convert yearly data to datetime (assuming year column contains just years)
+    if x_yearly == "Jaar":
+        df_yearly[x_yearly] = pd.to_datetime(df_yearly[x_yearly], format='%Y')
+    else:
+        df_yearly[x_yearly] = pd.to_datetime(df_yearly[x_yearly])
+    
+    # Ensure monthly data is datetime
+    df_monthly[x_monthly] = pd.to_datetime(df_monthly[x_monthly])
+    
+    # Resolve color
+    if color == "primary":
+        color = theme.colors[0]
+    elif color == "secondary":
+        color = theme.colors[1] if len(theme.colors) > 1 else theme.colors[0]
+    elif color == "accent":
+        color = theme.colors[2] if len(theme.colors) > 2 else theme.colors[0]
+
+    fig = go.Figure([
+        # Yearly data - solid line
+        go.Scatter(
+            x=df_yearly[x_yearly], y=df_yearly[y_yearly], 
+            mode="lines",
+            name=yearly_name, 
+            line=dict(color=color, width=3)
+        ),
+        # Monthly data - dashed line
+        go.Scatter(
+            x=df_monthly[x_monthly], y=df_monthly[y_monthly], 
+            mode="lines",
+            name=monthly_name, 
+            line=dict(color=color, width=2, dash="dash")
+        ),
+    ])
+
+    # Apply theme and responsive settings
+    apply_theme_and_responsive(fig, theme)
+    
+    # Override x-axis settings for less clutter since we have a long time range (2008-2025)
+    fig.update_xaxes(
+        dtick="M12",                # one tick every 12 months (yearly)
+        tickformat="%Y",            # show just the year
+        ticks="outside"
+    )
+
+    return fig
+
 def build(chart_type: str, **kwargs):
     """Build a chart using the registry"""
     if chart_type not in _REGISTRY:

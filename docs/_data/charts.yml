@@ -102,3 +102,45 @@ charts:
     meta:
       slug: Embuild_vergunningen_story
       alt: Area chart showing new construction permits over time
+
+  # Bouwbedrijven 2025 charts
+  - name: bouwbedrijven-totaal
+    type: line_dual_data
+    params:
+      yearly_data_path: docs/assets/reports/bouwbedrijven-2025/data/yearly_clean.csv
+      monthly_data_path: docs/assets/reports/bouwbedrijven-2025/data/monthly_clean.csv
+      x_yearly: Jaar
+      x_monthly: Datum
+      y_yearly: Totaal_ondernemingen
+      y_monthly: Totaal_ondernemingen
+      yearly_name: "Long-term trend (yearly)"
+      monthly_name: "Short-term trend (monthly)"
+      title: ""  # No title - will be removed anyway
+    output: docs/assets/bouwbedrijven-totaal/figure.html
+    meta:
+      slug: bouwbedrijven-totaal
+      alt: Totaal aantal bouwbedrijven in Vlaanderen
+
+  - name: bouwbedrijven-starters-stoppers
+    type: line_multi
+    params:
+      data_path: docs/assets/reports/bouwbedrijven-2025/data/monthly_clean.csv
+      x: Datum
+      ys: [Starters, Stoppers]
+      title: ""  # No title - will be removed anyway
+    output: docs/assets/bouwbedrijven-starters-stoppers/figure.html
+    meta:
+      slug: bouwbedrijven-starters-stoppers
+      alt: Starters vs stoppers bouwbedrijven in Vlaanderen
+
+  - name: bouwbedrijven-yoy
+    type: line_multi
+    params:
+      data_path: docs/assets/reports/bouwbedrijven-2025/data/yoy_growth.csv
+      x: Datum
+      ys: [YoY_pct]
+      title: ""  # No title - will be removed anyway
+    output: docs/assets/bouwbedrijven-yoy/figure.html
+    meta:
+      slug: bouwbedrijven-yoy
+      alt: YoY groei percentage bouwbedrijven in Vlaanderen

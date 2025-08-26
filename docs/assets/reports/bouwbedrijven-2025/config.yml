@@ -1,0 +1,14 @@
+title: Bouwbedrijven 2025
+charts:
+  - slug: bouwbedrijven-totaal
+    caption: Totaal aantal bouwbedrijven
+  - slug: bouwbedrijven-starters-stoppers
+    caption: Starters vs stoppers
+  - slug: bouwbedrijven-yoy
+    caption: YoY-groei (percentage)
+downloads:
+  - label: Data (CSV)
+    path: assets/reports/bouwbedrijven-2025/data/monthly_clean.csv
+sources:
+  - label: Statbel – btw‑plichtige ondernemingen
+    url: https://statbel.fgov.be/nl/themas/ondernemingen/btw-plichtige-ondernemingen

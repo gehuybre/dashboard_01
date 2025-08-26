@@ -52,6 +52,15 @@ def define_env(env):
             if k in files:
                 download_parts.append(f'<a class="dl-btn" href="{abs_url(files[k])}" download>{label}</a>')
         
+        # Handle multiple CSV variants using csv_* naming convention
+        for key in files.keys():
+            if key.startswith("csv_"):
+                # Extract the variant name (e.g., "csv_monthly" -> "monthly")
+                variant = key[4:]  # Remove "csv_" prefix
+                # Capitalize first letter for display (e.g., "monthly" -> "Monthly")
+                display_name = variant.replace("_", " ").title()
+                download_parts.append(f'<a class="dl-btn" href="{abs_url(files[key])}" download>CSV ({display_name})</a>')
+        
         # -- Embed UI (Flourish style) - separate section ----------------------------------------
         embed_ui = ""
         if slug:

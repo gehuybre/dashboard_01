@@ -1,0 +1,49 @@
+report:
+  slug: bouwbedrijven-2025
+  data: assets/reports/bouwbedrijven-2025/data/monthly_clean.csv  # Clean location
+  output_dir: assets/reports/bouwbedrijven-2025/charts  # Organized output
+  defaults:
+    title: null                   # never draw a chart title inside the figure
+    color_alias:                  # map semantic roles to brand colors
+      totaal: primary
+      starters: secondary
+      stoppers: accent
+    yaxis:
+      range: [0, null]
+    legend:
+      orientation: h
+      y: 1.05
+
+charts:
+  - id: totaal
+    type: line_multi             # chart class in charts.py
+    x: Datum
+    ys: [Totaal_ondernemingen]
+    color: primary                # uses site palette
+    xaxis:
+      dtick: "M3"
+      tickformat: "%b %Y"
+    title: "Totaal aantal bouwbedrijven"
+
+  - id: starters-stoppers
+    type: line_multi
+    x: Datum
+    ys: [Starters, Stoppers]
+    color: secondary
+    xaxis:
+      dtick: "M3"
+      tickformat: "%b %Y"
+    title: "Starters vs Stoppers"
+
+  - id: yoy
+    type: line_multi
+    x: Datum
+    ys: [YoY_pct]
+    data: assets/reports/bouwbedrijven-2025/data/yoy_growth.csv
+    color: accent
+    xaxis:
+      dtick: "M3"
+      tickformat: "%b %Y"
+    yaxis:
+      title: "YoY Groei (%)"
+    title: "Year-over-Year groei"
