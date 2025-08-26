@@ -158,16 +158,22 @@ def area_filled(data_path, x, y, color=None, title=""):
     return fig
 
 @chart("line_pair")
-def line_pair(df: pd.DataFrame, site: dict, spec: dict, defaults: dict):
-    """Line chart with monthly data + trend line (dashed + solid)"""
+def line_pair(data_path, x, series, color="primary", title="", **kwargs):
+    """Line chart with quarterly data + trend line (dashed + solid)"""
+    theme = load_theme()
+    df = pd.read_csv(data_path)
+    
     # Resolve color
-    color = spec.get("color", "primary")
-    if color in ("primary", "secondary", "accent", "neutral", "gray"):
-        color = color_from_alias(color, site)
+    if color == "primary":
+        color = theme.colors[0]
+    elif color == "secondary":
+        color = theme.colors[1] if len(theme.colors) > 1 else theme.colors[0]
+    elif color == "accent":
+        color = theme.colors[2] if len(theme.colors) > 2 else theme.colors[0]
 
-    x = spec["x"]
-    monthly_series = next(s for s in spec["series"] if s["role"] == "monthly")
-    trend_series = next(s for s in spec["series"] if s["role"] == "trend")
+    # Find series by role
+    monthly_series = next(s for s in series if s["role"] == "monthly")
+    trend_series = next(s for s in series if s["role"] == "trend")
     
     monthly_col = monthly_series["column"]
     trend_col = trend_series["column"]
@@ -176,7 +182,7 @@ def line_pair(df: pd.DataFrame, site: dict, spec: dict, defaults: dict):
         go.Scatter(
             x=df[x], y=df[monthly_col], 
             mode="lines",
-            name="Maandelijks niveau", 
+            name="Kwartaalcijfers", 
             line=dict(color=color, width=2, dash="dash")
         ),
         go.Scatter(
@@ -187,39 +193,9 @@ def line_pair(df: pd.DataFrame, site: dict, spec: dict, defaults: dict):
         ),
     ])
 
-    # Merge defaults for axes/legend
-    y_cfg = defaults.get("yaxis", {})
-    fig.update_yaxes(
-        range=y_cfg.get("range", [0, None]), 
-        automargin=True, 
-        ticks="outside",
-        zeroline=True,
-        zerolinewidth=1
-    )
+    # Apply theme and responsive settings
+    apply_theme_and_responsive(fig, theme)
 
-    x_cfg = spec.get("xaxis", {})
-    fig.update_xaxes(
-        dtick=x_cfg.get("dtick", "M3"),
-        tickformat=x_cfg.get("tickformat", "%b %Y"),
-        automargin=True, 
-        ticks="outside"
-    )
-
-    legend_cfg = defaults.get("legend", {})
-    fig.update_layout(
-        template=site.get("charts", {}).get("template", "simple_white"),
-        font=dict(family=site.get("charts", {}).get("font_family", "Inter, sans-serif")),
-        height=560,
-        margin=dict(l=60, r=24, t=24, b=96),
-        legend=dict(
-            orientation=legend_cfg.get("orientation", "h"),
-            x=0, 
-            y=legend_cfg.get("y", 1.05)
-        ),
-        title=None,
-        autosize=True
-    )
-    
     return fig
 
 def build(chart_type: str, **kwargs):

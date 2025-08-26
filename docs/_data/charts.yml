@@ -2,37 +2,52 @@
 charts:
   # Main vergunningen charts for the report
   - name: vergunningen-nieuwbouw
-    type: line_multi
+    type: line_pair
     params:
-      data_path: docs/assets/Embuild_vergunningen_story/graph_data_export.csv
+      data_path: docs/assets/reports/vergunningen-2025/data/graph_data_clean.csv
       x: Datum
-      ys: ["Nieuwbouw"]
+      series:
+        - column: Nieuwbouw
+          role: monthly
+        - column: Nieuwbouw (voortschrijdend gemiddelde)
+          role: trend
+      color: primary
       title: ""  # No title - will be removed anyway
-    output: docs/assets/vergunningen-nieuwbouw/nieuwbouw.html
+    output: docs/assets/vergunningen-nieuwbouw/figure.html
     meta:
       slug: vergunningen-nieuwbouw
       alt: Vergunningsaanvragen voor nieuwbouw in Vlaanderen
 
   - name: vergunningen-verbouwen
-    type: line_multi
+    type: line_pair
     params:
-      data_path: docs/assets/Embuild_vergunningen_story/graph_data_export.csv
+      data_path: docs/assets/reports/vergunningen-2025/data/graph_data_clean.csv
       x: Datum
-      ys: ["Verbouwen of hergebruik"]
+      series:
+        - column: Verbouwen of hergebruik
+          role: monthly
+        - column: Verbouwen of hergebruik (voortschrijdend gemiddelde)
+          role: trend
+      color: secondary
       title: ""  # No title - will be removed anyway
-    output: docs/assets/vergunningen-verbouwen/verbouwen.html
+    output: docs/assets/vergunningen-verbouwen/figure.html
     meta:
       slug: vergunningen-verbouwen
       alt: Vergunningsaanvragen voor verbouwen en hergebruik in Vlaanderen
 
   - name: vergunningen-sloop
-    type: line_multi
+    type: line_pair
     params:
-      data_path: docs/assets/Embuild_vergunningen_story/graph_data_export.csv
+      data_path: docs/assets/reports/vergunningen-2025/data/graph_data_clean.csv
       x: Datum
-      ys: ["Sloop"]
+      series:
+        - column: Sloop
+          role: monthly
+        - column: Sloop (voortschrijdend gemiddelde)
+          role: trend
+      color: accent
       title: ""  # No title - will be removed anyway
-    output: docs/assets/vergunningen-sloop/sloop.html
+    output: docs/assets/vergunningen-sloop/figure.html
     meta:
       slug: vergunningen-sloop
       alt: Vergunningsaanvragen voor sloop in Vlaanderen
