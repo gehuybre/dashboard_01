@@ -4,7 +4,9 @@ import os, glob, yaml
 import mkdocs_gen_files
 
 DOCS = "docs"
-ASSET_YMLS = glob.glob(os.path.join(DOCS, "assets", "**", "asset.yml"), recursive=True)
+# Only look for assets in direct subdirectories of assets/ (skip embed folders)
+ASSET_YMLS = [yml for yml in glob.glob(os.path.join(DOCS, "assets", "*/asset.yml"), recursive=False) 
+              if not os.path.basename(os.path.dirname(yml)).endswith("-embed")]
 
 def write(path, content):
     with mkdocs_gen_files.open(path, "w") as f:
@@ -19,26 +21,8 @@ for yml in ASSET_YMLS:
     tags = meta.get("tags", [])
     files = meta.get("files", {})
     
-    # Organize generated pages by putting them in subdirectories
-    # Legacy assets go in assets/legacy/pages/
-    # Assets in /reports/ directory always go in their nested structure  
-    if "legacy/" in yml:
-        page_prefix = "assets/legacy/pages"
-    elif "/reports/" in yml:
-        # Extract report slug from path like: docs/assets/reports/vergunningen-2025/charts/nieuwbouw/
-        path_parts = yml.split("/")
-        if "reports" in path_parts:
-            report_idx = path_parts.index("reports")
-            if len(path_parts) > report_idx + 1:
-                report_slug = path_parts[report_idx + 1]
-                page_prefix = f"assets/reports/{report_slug}/pages"
-            else:
-                page_prefix = "assets/reports/pages"
-        else:
-            page_prefix = "assets/reports/pages"
-    else:
-        # Other assets go directly in assets/ for proper URL structure
-        page_prefix = "assets"
+    # All assets now go directly in assets/ with simple structure
+    page_prefix = "assets"
     
     # Detail page
     detail_md = f"""---
@@ -52,7 +36,7 @@ tags: {tags}
 """
     write(f"{page_prefix}/{slug}.md", detail_md)
 
-    # Minimal embed page  
+    # Minimal embed page - goes to <slug>-embed/ directory
     embed_md = f"""---
 title: {title} (Embed)
 embed: true
@@ -65,4 +49,4 @@ hide:
 {{{{ embed_page_content({meta}) }}}}
 </div>
 """
-    write(f"{page_prefix}/{slug}-embed.md", embed_md)
+    write(f"assets/{slug}-embed/index.md", embed_md)

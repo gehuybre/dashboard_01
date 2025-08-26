@@ -57,7 +57,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Reports:
-      - reports/embuild-vergunningen-2025.md
+      - reports/vergunningen-2025/index.md
   - Guides:
       - guides/user-guide.md
       - guides/developer-guide.md
